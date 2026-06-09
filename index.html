@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Artwork | Curated Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --midnight: #0a0e27;
+            --deep-blue: #0f1538;
+            --navy: #1a237e;
+            --royal-blue: #283593;
+            --azure: #3949ab;
+            --sky-blue: #5c6bc0;
+            --pale-blue: #9fa8da;
+            --silver: #c5cae9;
+            --moon-glow: #fff9c4;
+            --star-gold: #ffd54f;
+            --warm-gold: #ffca28;
+            --amber: #ff8f00;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, 
+                #02040a 0%, 
+                #0a0e27 15%, 
+                #0f1538 35%, 
+                #1a237e 60%, 
+                #0f1538 85%, 
+                #02040a 100%);
+            background-attachment: fixed;
+            color: #e8eaf6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== STARFIELD ===== */
+        .starfield {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .star {
+            position: absolute; border-radius: 50%;
+            background: white;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: var(--opacity);
+        }
+
+        .star.bright {
+            box-shadow: 0 0 6px 2px rgba(255,255,255,0.6), 0 0 12px 4px rgba(255,215,79,0.3);
+        }
+
+        .star.golden {
+            background: var(--star-gold);
+            box-shadow: 0 0 8px 2px rgba(255,213,79,0.5), 0 0 16px 4px rgba(255,213,79,0.2);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--opacity); transform: scale(1); }
+            50% { opacity: calc(var(--opacity) * 2); transform: scale(1.3); }
+        }
+
+        .shooting-star {
+            position: absolute; width: 4px; height: 4px;
+            background: white; border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(255,255,255,0.8);
+            animation: shoot var(--shoot-duration) linear infinite;
+            opacity: 0;
+        }
+
+        .shooting-star::after {
+            content: ''; position: absolute; top: 50%; right: 0;
+            width: 150px; height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
+            transform: translateY(-50%);
+        }
+
+        @keyframes shoot {
+            0% { transform: translateX(0) translateY(0); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translateX(-500px) translateY(300px); opacity: 0; }
+        }
+
+        .nebula {
+            position: fixed; border-radius: 50%;
+            filter: blur(60px); pointer-events: none; z-index: 0;
+            opacity: 0.12;
+            animation: nebulaFloat 30s infinite ease-in-out;
+        }
+
+        .nebula.blue { background: radial-gradient(circle, #3949ab, transparent); }
+        .nebula.gold { background: radial-gradient(circle, #ffd54f, transparent); }
+        .nebula.purple { background: radial-gradient(circle, #7c4dff, transparent); }
+
+        @keyframes nebulaFloat {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(50px, -30px) scale(1.2) rotate(120deg); }
+            66% { transform: translate(-30px, 40px) scale(0.9) rotate(240deg); }
+        }
+
+        /* ===== MOON ===== */
+        .moon-container {
+            position: fixed; top: 8%; right: 10%;
+            z-index: 1; pointer-events: none;
+        }
+
+        .moon {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fffde7, #fff9c4 40%, #ffd54f 100%);
+            box-shadow: 
+                0 0 40px 10px rgba(255,249,196,0.3),
+                0 0 80px 20px rgba(255,213,79,0.15),
+                inset -10px -10px 20px rgba(255,167,38,0.2);
+            position: relative;
+            animation: moonPulse 4s ease-in-out infinite;
+        }
+
+        .moon::before {
+            content: ''; position: absolute;
+            top: 20%; left: 25%; width: 15px; height: 15px;
+            border-radius: 50%; background: rgba(255,167,38,0.15);
+        }
+
+        .moon::after {
+            content: ''; position: absolute;
+            top: 45%; left: 55%; width: 10px; height: 10px;
+            border-radius: 50%; background: rgba(255,167,38,0.1);
+        }
+
+        @keyframes moonPulse {
+            0%, 100% { box-shadow: 0 0 40px 10px rgba(255,249,196,0.3), 0 0 80px 20px rgba(255,213,79,0.15); }
+            50% { box-shadow: 0 0 60px 15px rgba(255,249,196,0.4), 0 0 100px 30px rgba(255,213,79,0.2); }
+        }
+
+        /* ===== HILLS ===== */
+        .hills {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            height: 200px; pointer-events: none; z-index: 1;
+            opacity: 0.25;
+        }
+
+        .hill {
+            position: absolute; bottom: 0;
+            border-radius: 100% 100% 0 0;
+            background: linear-gradient(180deg, rgba(13,51,24,0.4), rgba(2,4,10,0.8));
+        }
+
+        .hill:nth-child(1) { width: 60%; height: 120px; left: -10%; }
+        .hill:nth-child(2) { width: 50%; height: 80px; right: -5%; }
+        .hill:nth-child(3) { width: 40%; height: 60px; left: 30%; }
+
+        /* ===== HEADER ===== */
+        header {
+            position: relative; z-index: 10;
+            text-align: center;
+            padding: 70px 20px 40px;
+            overflow: hidden;
+        }
+
+        .header-glow {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px; height: 300px;
+            background: radial-gradient(ellipse, rgba(57,73,171,0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #fff9c4 20%, #ffd54f 40%, #fff 60%, #c5cae9 80%, #fff 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            animation: shimmerText 5s linear infinite;
+            filter: drop-shadow(0 0 30px rgba(255,213,79,0.3));
+        }
+
+        @keyframes shimmerText {
+            0% { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+
+        .subtitle {
+            font-family: 'Lora', serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            color: #9fa8da;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            width: 100px; height: 2px;
+            background: linear-gradient(90deg, transparent, #ffd54f, #3949ab, transparent);
+            margin: 25px auto;
+            border-radius: 2px;
+            animation: glowLine 3s ease-in-out infinite;
+        }
+
+        @keyframes glowLine {
+            0%, 100% { width: 100px; opacity: 0.6; box-shadow: 0 0 5px rgba(255,213,79,0.3); }
+            50% { width: 160px; opacity: 1; box-shadow: 0 0 20px rgba(255,213,79,0.6), 0 0 40px rgba(57,73,171,0.3); }
+        }
+
+        .art-count {
+            font-size: 0.85rem; color: #9fa8da; opacity: 0.8;
+            margin-top: 5px; font-family: 'Poppins', sans-serif;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* ===== ADMIN BAR & LOGIN ===== */
+        .admin-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(2,4,10,0.95); backdrop-filter: blur(20px);
+            z-index: 200; padding: 12px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(57,73,171,0.2);
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .admin-bar.visible { transform: translateY(0); }
+
+        .admin-bar-title {
+            font-family: 'Cinzel', serif; font-size: 0.85rem; color: #ffd54f;
+            letter-spacing: 3px; text-transform: uppercase;
+        }
+
+        .admin-bar-actions { display: flex; gap: 12px; }
+
+        .admin-btn {
+            padding: 8px 20px; border-radius: 20px;
+            font-family: 'Poppins', sans-serif; font-size: 0.8rem;
+            font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+            border: none; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        .admin-btn.add { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
+        .admin-btn.add:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(57,73,171,0.5); }
+        .admin-btn.logout { background: transparent; color: #9fa8da; border: 1px solid rgba(57,73,171,0.4); }
+        .admin-btn.logout:hover { border-color: #ef5350; color: #ef5350; }
+
+        .login-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2,4,10,0.95); backdrop-filter: blur(20px);
+            z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px;
+        }
+        .login-overlay.active { display: flex; }
+
+        .login-box, .add-box {
+            background: linear-gradient(145deg, rgba(26,35,126,0.3), rgba(10,14,39,0.6));
+            border-radius: 24px; padding: 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(57,73,171,0.3);
+            border: 1px solid rgba(57,73,171,0.2);
+        }
+        .login-box { max-width: 420px; width: 100%; }
+        
+        .login-box h2, .add-box h2 {
+            font-family: 'Cinzel', serif; font-size: 1.5rem; color: #ffd54f;
+            text-align: center; margin-bottom: 8px; letter-spacing: 3px;
+        }
+        .login-box p, .add-box p { text-align: center; color: #9fa8da; font-size: 0.85rem; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block; font-size: 0.8rem; color: #9fa8da; margin-bottom: 8px;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .form-group input, .form-group select {
+            width: 100%; padding: 14px 18px;
+            background: rgba(10,14,39,0.6); border: 1px solid rgba(57,73,171,0.3);
+            border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none; border-color: #ffd54f; box-shadow: 0 0 15px rgba(255,213,79,0.15);
+        }
+        .form-group select { cursor: pointer; }
+        .form-group select option { background: #0a0e27; color: white; }
+
+        .login-btn, .add-actions .btn {
+            width: 100%; padding: 14px; border-radius: 12px;
+            font-family: 'Poppins', sans-serif; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; text-transform: uppercase; border: none;
+        }
+        .login-btn, .btn.save { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
+        .login-btn:hover, .btn.save:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(57,73,171,0.5); }
+        .login-error { color: #ef5350; font-size: 0.8rem; text-align: center; margin-top: 12px; display: none; }
+        .login-error.visible { display: block; }
+
+        /* ===== ADD ARTWORK MODAL ===== */
+        .add-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2,4,10,0.95); backdrop-filter: blur(20px);
+            z-index: 1500; display: none; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;
+        }
+        .add-overlay.active { display: flex; }
+        .add-box { max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .add-actions { display: flex; gap: 12px; margin-top: 24px; }
+        .add-actions .btn.cancel { background: transparent; color: #9fa8da; border: 1px solid rgba(57,73,171,0.4); }
+        .add-actions .btn.cancel:hover { border-color: #ef5350; color: #ef5350; }
+
+        /* ===== NAVIGATION ===== */
+        .nav-container {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 14, 39, 0.85); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px); padding: 14px 10px;
+            border-bottom: 1px solid rgba(57,73,171,0.2);
+            overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        }
+        .nav-tabs {
+            display: flex; gap: 10px; min-width: max-content;
+            justify-content: flex-start; padding: 0 10px; margin: 0 auto; max-width: 1200px;
+        }
+        .nav-tab {
+            padding: 10px 24px; border: none; background: transparent;
+            color: #9fa8da; font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem; font-weight: 500; cursor: pointer;
+            border-radius: 30px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden; white-space: nowrap;
+            border: 1px solid rgba(57,73,171,0.3); letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .nav-tab::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a237e, #3949ab); opacity: 0; transition: opacity 0.4s ease;
+            border-radius: 30px; z-index: -1;
+        }
+        .nav-tab:hover::before, .nav-tab.active::before { opacity: 1; }
+        .nav-tab:hover, .nav-tab.active {
+            color: white; transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(57,73,171,0.4); border-color: transparent;
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, #3949ab, #1a237e);
+            box-shadow: 0 0 25px rgba(57,73,171,0.5), 0 0 50px rgba(57,73,171,0.2);
+        }
+
+        /* ===== MAIN CONTENT & CARDS ===== */
+        main { position: relative; z-index: 5; max-width: 1400px; margin: 0 auto; padding: 40px 15px 60px; }
+        .category-section { display: none; }
+        .category-section.active { display: block; animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .category-title {
+            font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 5vw, 2.5rem); color: #ffd54f;
+            text-align: center; margin-bottom: 10px; position: relative; display: inline-block;
+            left: 50%; transform: translateX(-50%); text-shadow: 0 0 30px rgba(255,213,79,0.3); letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        .category-title::after {
+            content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 3px; background: linear-gradient(90deg, #ffd54f, #3949ab, #ffd54f);
+            border-radius: 2px; animation: glowLine 2s ease-in-out infinite;
+        }
+
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px; padding: 30px 0 15px 0;
+        }
+        @media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr; gap: 22px; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .art-card {
+            background: linear-gradient(145deg, rgba(26,35,126,0.25), rgba(10,14,39,0.5));
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(57,73,171,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer; position: relative; backdrop-filter: blur(10px);
+            opacity: 0; transform: translateY(30px); animation: cardEnter 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes cardEnter { to { opacity: 1; transform: translateY(0); } }
+
+        .art-card:hover, .art-card:active {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(57,73,171,0.25), 0 0 0 1px rgba(57,73,171,0.3), 0 0 40px rgba(255,213,79,0.1);
+        }
+
+        .art-image-container {
+            position: relative; overflow: hidden; background: rgba(10,14,39,0.4);
+            aspect-ratio: 4/5; display: flex; align-items: center; justify-content: center;
+        }
+        .art-image-container::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+            border: 3px solid rgba(57,73,171,0.2); border-top-color: #3949ab; border-radius: 50%;
+            animation: spin 1s linear infinite; opacity: 0; transition: opacity 0.3s;
+        }
+        .art-image-container.loading::after { opacity: 1; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .art-image {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .art-card:hover .art-image { transform: scale(1.08); }
+
+        .img-error {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            color: #9fa8da; font-size: 0.85rem; text-align: center; padding: 20px;
+        }
+        .art-image.error + .img-error {
+            display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,14,39,0.9);
+        }
+
+        .art-content { 
+            padding: 20px 22px; 
+            position: relative; 
+            z-index: 3; 
+            border-top: 1px solid rgba(57,73,171,0.2);
+            background: rgba(10,14,39,0.6);
+        }
+        
+        .art-title { 
+            font-family: 'Cinzel', serif; 
+            font-size: 1.1rem; 
+            font-weight: 600; 
+            color: #fff; 
+            margin-bottom: 6px; 
+            line-height: 1.3; 
+            letter-spacing: 1px;
+        }
+        
+        .art-subtitle { 
+            font-size: 0.75rem; 
+            color: #9fa8da; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 500;
+        }
+
+        /* ===== LIGHTBOX (WITH ZOOM/PAN) ===== */
+        .lightbox {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2,4,10,0.98); z-index: 2000; justify-content: center; align-items: center;
+            flex-direction: column; animation: fadeIn 0.3s ease; backdrop-filter: blur(20px); overflow: hidden;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox-img-wrapper {
+            position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; cursor: grab; touch-action: none;
+        }
+        .lightbox-img-wrapper:active { cursor: grabbing; }
+        .lightbox-img-wrapper.is-zoomed { cursor: grab; }
+        
+        .lightbox-img {
+            max-width: 100%; max-height: 100vh; object-fit: contain;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-origin: center center; user-select: none; -webkit-user-drag: none;
+            box-shadow: 0 0 80px rgba(57,73,171,0.3); border-radius: 8px;
+        }
+        .lightbox-img.zoomed { max-width: none; max-height: none; transition: none; }
+        .lightbox-img.error { display: none; }
+        
+        .lightbox-error { display: none; color: #9fa8da; flex-direction: column; align-items: center; animation: zoomIn 0.4s ease; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;}
+        .lightbox-error.active { display: flex; }
+
+        .lightbox-controls {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 12px; z-index: 1002; background: rgba(10,14,39,0.8);
+            backdrop-filter: blur(20px); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid rgba(57,73,171,0.4); box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .lightbox.active .lightbox-controls { opacity: 1; }
+        .lightbox-controls:hover { opacity: 1 !important; }
+        
+        .lb-btn {
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,213,79,0.4);
+            background: rgba(26,35,126,0.6); color: white; font-size: 1.1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
+        }
+        .lb-btn:hover { background: rgba(57,73,171,0.8); transform: scale(1.1); box-shadow: 0 0 15px rgba(255,213,79,0.3); }
+        .lb-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        
+        .lb-zoom-level {
+            display: flex; align-items: center; justify-content: center; min-width: 60px;
+            color: #ffd54f; font-size: 0.85rem; font-weight: 500; font-family: 'Poppins', sans-serif;
+        }
+
+        .lightbox-close {
+            position: absolute; top: 24px; right: 24px; width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: white; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease; z-index: 1003; backdrop-filter: blur(10px);
+        }
+        .lightbox-close:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
+
+        .lightbox-info {
+            position: absolute; top: 24px; left: 24px; z-index: 1001; background: rgba(10,14,39,0.8);
+            backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 12px;
+            border: 1px solid rgba(57,73,171,0.3); max-width: 300px;
+        }
+        .lightbox-info h3 { font-family: 'Cinzel', serif; color: #ffd54f; font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 1px; }
+        .lightbox-info p { color: #9fa8da; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        @media (max-width: 768px) {
+            .lightbox-close { width: 42px; height: 42px; top: 15px; right: 15px; }
+            .lightbox-controls { bottom: 20px; padding: 8px 15px; gap: 8px; }
+            .lb-btn { width: 38px; height: 38px; font-size: 1rem; }
+            .lightbox-info { max-width: 200px; padding: 10px 15px; top: 15px; left: 15px; }
+            .lightbox-info h3 { font-size: 0.9rem; }
+            .lightbox-info p { font-size: 0.65rem; }
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            position: relative; z-index: 10; text-align: center; padding: 50px 20px;
+            background: linear-gradient(180deg, transparent, rgba(2,4,10,0.8));
+            border-top: 1px solid rgba(57,73,171,0.15);
+        }
+        .footer-text { font-family: 'Lora', serif; font-size: 0.9rem; color: #5c6bc0; font-style: italic; }
+        .footer-quote { font-family: 'Poppins', sans-serif; font-size: 0.8rem; color: #9fa8da; margin-top: 15px; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px;}
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0e27; }
+        ::-webkit-scrollbar-thumb { background: #3949ab; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #5c6bc0; }
+
+    </style>
+</head>
+<body>
+
+    <div class="admin-bar" id="adminBar">
+        <span class="admin-bar-title">✦ Owner Panel</span>
+        <div class="admin-bar-actions">
+            <button class="admin-btn add" onclick="openAddModal()">+ Add Artwork</button>
+            <button class="admin-btn logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>Owner Access</h2>
+            <p>Enter credentials to manage the gallery</p>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUser" placeholder="Enter username" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="Enter password">
+            </div>
+            <button class="login-btn" onclick="attemptLogin()">Sign In</button>
+            <p class="login-error" id="loginError">Invalid credentials. Please try again.</p>
+        </div>
+    </div>
+
+    <div class="add-overlay" id="addOverlay">
+        <div class="add-box">
+            <h2>Add New Artwork</h2>
+            <p>Fill in the details below to add a new piece to the archive</p>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="addTitle" placeholder="Artwork title">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="addCategory">
+                    <option value="Islamic Calligraphy">Islamic Calligraphy</option>
+                    <option value="Islamic Architecture">Islamic Architecture</option>
+                    <option value="Awareness Art">Awareness Art</option>
+                    <option value="Nature & Landscapes">Nature & Landscapes</option>
+                    <option value="Quranic Journal">Quranic Journal</option>
+                    <option value="Islamic Reminders">Islamic Reminders</option>
+                    <option value="Portraits & Eyes">Portraits & Eyes</option>
+                    <option value="Ramadan Cards">Ramadan Cards</option>
+                    <option value="Other Artworks">Other Artworks</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Image File / URL</label>
+                <input type="text" id="addImage" placeholder="e.g. image.jpg">
+            </div>
+            <div class="add-actions">
+                <button class="btn cancel" onclick="closeAddModal()">Cancel</button>
+                <button class="btn save" onclick="saveArtwork()">Save Artwork</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="starfield" id="starfield"></div>
+
+    <div class="nebula blue" style="width: 500px; height: 500px; top: 10%; left: -10%;"></div>
+    <div class="nebula gold" style="width: 400px; height: 400px; top: 30%; right: -5%; animation-delay: -10s;"></div>
+    <div class="nebula purple" style="width: 350px; height: 350px; bottom: 20%; left: 20%; animation-delay: -20s;"></div>
+
+    <div class="moon-container">
+        <div class="moon"></div>
+    </div>
+
+    <div class="hills">
+        <div class="hill"></div>
+        <div class="hill"></div>
+        <div class="hill"></div>
+    </div>
+
+    <header>
+        <div class="header-glow"></div>
+        <div class="header-content">
+            <h1>ART GALLERY</h1>
+            <p class="subtitle">A Curated Exhibition</p>
+            <div class="divider"></div>
+            <p class="art-count" id="headerCount">78 Works • Official Archive</p>
+            <button class="admin-btn add" style="margin-top:20px;" onclick="showLogin()" id="loginBtn">Owner Access</button>
+        </div>
+    </header>
+
+    <nav class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-category="all">All Artworks</button>
+            <button class="nav-tab" data-category="calligraphy">Islamic Calligraphy</button>
+            <button class="nav-tab" data-category="architecture">Islamic Architecture</button>
+            <button class="nav-tab" data-category="awareness">Awareness Art</button>
+            <button class="nav-tab" data-category="nature">Nature & Landscapes</button>
+            <button class="nav-tab" data-category="journal">Quranic Journal</button>
+            <button class="nav-tab" data-category="reminders">Islamic Reminders</button>
+            <button class="nav-tab" data-category="portraits">Portraits & Eyes</button>
+            <button class="nav-tab" data-category="ramadan">Ramadan Cards</button>
+            <button class="nav-tab" data-category="other">Other Artworks</button>
+        </div>
+    </nav>
+
+    <main id="gallery-main">
+        </main>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <div class="lightbox-info" id="lightbox-info">
+            <h3 id="lightbox-title"></h3>
+            <p id="lightbox-category"></p>
+        </div>
+        <div class="lightbox-img-wrapper" id="lightbox-wrapper">
+            <img src="" alt="" class="lightbox-img" id="lightbox-img" onerror="this.classList.add('error'); document.getElementById('lightbox-error').classList.add('active');">
+        </div>
+        <div class="lightbox-error" id="lightbox-error">
+            <div style="font-size: 2rem; margin-bottom: 10px;">⚠</div>
+            <div>Image Unavailable</div>
+        </div>
+        <div class="lightbox-controls">
+            <button class="lb-btn" onclick="zoomOut()" id="zoom-out" title="Zoom Out">−</button>
+            <span class="lb-zoom-level" id="zoom-level">100%</span>
+            <button class="lb-btn" onclick="zoomIn()" id="zoom-in" title="Zoom In">+</button>
+            <button class="lb-btn" onclick="resetZoom()" id="zoom-reset" title="Reset Zoom" style="font-size: 0.8rem;">⟲</button>
+            <button class="lb-btn" onclick="prevImage()" title="Previous">←</button>
+            <button class="lb-btn" onclick="nextImage()" title="Next">→</button>
+        </div>
+    </div>
+
+    <footer>
+        <p class="footer-text">"For my part I know nothing with any certainty, but the sight of the stars makes me dream."</p>
+        <p class="footer-quote">Maintained & Curated with Passion</p>
+    </footer>
+
+    <script>
+        // ===== OWNER CREDENTIALS =====
+        const OWNER_CREDENTIALS = {
+            username: 'owner',
+            password: 'artwork2024'
+        };
+
+        let isOwner = false;
+
+        // ===== ALL 78 ARTWORKS DATA (MINIMAL & PROFESSIONAL) =====
+        let artworks = [
+            { src: "Screenshot_20260608_130926_Instagram.jpg", title: "Calligraphy Collection", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_130939_Instagram.jpg", title: "Watercolor Calligraphy Strips", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_130951_Instagram.jpg", title: "Minar-e-Pakistan", category: "Islamic Architecture" },
+            { src: "Screenshot_20260608_131000_Instagram.jpg", title: "Serene Mountain Landscape", category: "Nature & Landscapes" },
+            { src: "Screenshot_20260608_131011_Instagram.jpg", title: "Palestine Awareness Poster", category: "Awareness Art" },
+            { src: "Screenshot_20260608_131024_Instagram.jpg", title: "Anatomical Heart", category: "Other Artworks" },
+            { src: "Screenshot_20260608_131040_Instagram.jpg", title: "Moon Art", category: "Nature & Landscapes" },
+            { src: "Screenshot_20260608_131106_Instagram.jpg", title: "Green Dome Mosque", category: "Islamic Architecture" },
+            { src: "Screenshot_20260608_131112_Instagram.jpg", title: "\"And He is With You\" Calligraphy", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131117_Instagram.jpg", title: "Ya Hussain Calligraphy", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131122_Instagram.jpg", title: "Hasbunallahu wa Ni'mal Wakeel", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131131_Instagram.jpg", title: "La ilaha illallah", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131139_Instagram.jpg", title: "Palestine Journal Spread", category: "Awareness Art" },
+            { src: "Screenshot_20260608_131153_Instagram.jpg", title: "Kaaba & Green Dome Cards", category: "Islamic Architecture" },
+            { src: "Screenshot_20260608_131206_Instagram.jpg", title: "Mosque-Shaped Calligraphy", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131213_Instagram.jpg", title: "Allah on Tree Bark", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131221_Instagram.jpg", title: "Candle & Flower Calligraphy", category: "Islamic Calligraphy" },
+            { src: "Screenshot_20260608_131226_Instagram.jpg", title: "Dome Under the Moonlight", category: "Islamic Architecture" },
+            { src: "Screenshot_20260608_131232_Instagram.jpg", title: "Surah Duha Journal - Stars", category: "Quranic Journal" },
+            { src: "Screenshot_20260608_131243_Instagram.jpg", title: "Surah Duha Journal - Roses", category: "Quranic Journal" },
+            { src: "Screenshot_20260608_131300_Instagram.jpg", title: "Premium Reminder Collection", category: "Islamic Reminders" },
+            { src: "Screenshot_20260608_131306_Instagram.jpg", title: "Surah Duha Floral Spread", category: "Quranic Journal" },
+            { src: "Screenshot_20260608_131328_Instagram.jpg", title: "Sujood at Sunset", category: "Nature & Landscapes" },
+            { src: "Screenshot_20260608_131334_Instagram.jpg", title: "Sunflower Hardship & Ease", category: "Nature & Landscapes" },
+            { src: "Screenshot_20260608_131342_Instagram.jpg", title: "Starry Night Islamic Journal", category: "Quranic Journal" },
+            { src: "Screenshot_20260608_131252_Instagram.jpg", title: "Elegant Quranic Reminders", category: "Islamic Reminders" },
+            { src: "Snapchat-1470198826(1).jpg", title: "Mystic Purple Moon", category: "Other Artworks" },
+            { src: "Snapchat-705301948.jpg", title: "Cosmic Garden Painting", category: "Other Artworks" },
+            { src: "Snapchat-1497800412.jpg", title: "Iridescent Eye on Grass", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_132714_138.jpg", title: "Dervish Spirituality Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153459_462.jpg", title: "Mosque Architecture Sketch", category: "Islamic Architecture" },
+            { src: "IMG_20260608_153500_951.jpg", title: "Arabic Calligraphy on Pink", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153502_427.jpg", title: "Palestine Solidarity Art", category: "Awareness Art" },
+            { src: "IMG_20260608_153503_773.jpg", title: "Anime Eyes Sketch", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153505_004.jpg", title: "Beautiful Eyes, Beautiful Soul", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153506_986.jpg", title: "Defying Fate Together", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153508_569.jpg", title: "Eyes Are Windows of the Soul", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153510_386.jpg", title: "Rainbow Beach Sunset", category: "Nature & Landscapes" },
+            { src: "IMG_20260608_153519_921.jpg", title: "Enchanted Forest Stream", category: "Nature & Landscapes" },
+            { src: "IMG_20260608_153521_537.jpg", title: "Sunset Calligraphy Art", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153529_186.jpg", title: "Tulip & Bismillah Art", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153530_639.jpg", title: "Surah Al-Ikhlas Journal Page", category: "Quranic Journal" },
+            { src: "IMG_20260608_153531_913.jpg", title: "Surah Al-Falaq Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153535_675.jpg", title: "Surah An-Nas Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153537_137.jpg", title: "Surah Al-Kafirun Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153538_463.jpg", title: "Surah Al-Kawthar Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153541_537.jpg", title: "Colorful Ramadan Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153553_039.jpg", title: "Red & Gold Ramadan Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153603_086.jpg", title: "Pink Ramadan Cards Collection", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153604_569.jpg", title: "Blue & Pink Ramadan Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153607_695.jpg", title: "Minimalist Blue Ramadan Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153609_292.jpg", title: "Floral Ramadan in Advance Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153614_861.jpg", title: "Purple & Pink Ramadan Cards", category: "Ramadan Cards" },
+            { src: "IMG_20260608_153616_136.jpg", title: "Surah Baqarah Calligraphy", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153617_878.jpg", title: "Ar-Rahman Gold Calligraphy", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153620_912.jpg", title: "Dua, Sabr & Shukr Floral Cards", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153639_988.jpg", title: "Sabr on Rainbow Watercolor", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153700_888.jpg", title: "Salamun Qaulan Calligraphy", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153730_893.jpg", title: "Importance of Salah Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153732_491.jpg", title: "Salah Benefits Mosaic Journal", category: "Quranic Journal" },
+            { src: "IMG_20260608_153733_935.jpg", title: "Improve Your Salah Guide", category: "Quranic Journal" },
+            { src: "IMG_20260608_153735_740.jpg", title: "Sunflower Watercolor Painting", category: "Nature & Landscapes" },
+            { src: "IMG_20260608_153737_351.jpg", title: "Tulip Colored Pencil Drawing", category: "Nature & Landscapes" },
+            { src: "IMG_20260608_153739_018.jpg", title: "Disenthal Freedom Art", category: "Other Artworks" },
+            { src: "IMG_20260608_153740_401.jpg", title: "Space Popup Book", category: "Other Artworks" },
+            { src: "IMG_20260608_153741_893.jpg", title: "Tangled Lanterns Scene", category: "Other Artworks" },
+            { src: "IMG_20260608_153743_826.jpg", title: "Hand-Painted Sunflower Pen Holder", category: "Other Artworks" },
+            { src: "IMG_20260608_153745_793.jpg", title: "Anime Portrait with Hat", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153759_903.jpg", title: "Fa Inna Ma'al Usri Yusra - Pink Mosque Art", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153802_545.jpg", title: "99 Names of Allah Colorful Grid", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153804_712.jpg", title: "Latifun Khabir Gold Calligraphy", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153811_271.jpg", title: "Excellent Reward for Righteous Workers", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153827_720.jpg", title: "Sunflower Verse Art", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153830_263.jpg", title: "Rose Silhouette in Hand", category: "Other Artworks" },
+            { src: "IMG_20260608_153831_869.jpg", title: "Naruto Character Collage", category: "Other Artworks" },
+            { src: "IMG_20260608_153833_704.jpg", title: "Traditional Sari Portrait", category: "Portraits & Eyes" },
+            { src: "IMG_20260608_153835_187.jpg", title: "Noor Ki Dua - Handwritten Prayer", category: "Islamic Calligraphy" },
+            { src: "IMG_20260608_153838_529.jpg", title: "Pixel Sunset Cityscape", category: "Other Artworks" }
+        ];
+
+        // ===== ALL 10 CATEGORIES =====
+        const categoryMap = {
+            'all': { title: 'Exhibition', filter: () => true },
+            'calligraphy': { title: 'Islamic Calligraphy', filter: a => a.category === 'Islamic Calligraphy' },
+            'architecture': { title: 'Islamic Architecture', filter: a => a.category === 'Islamic Architecture' },
+            'awareness': { title: 'Awareness Art', filter: a => a.category === 'Awareness Art' },
+            'nature': { title: 'Nature & Landscapes', filter: a => a.category === 'Nature & Landscapes' },
+            'journal': { title: 'Quranic Journal', filter: a => a.category === 'Quranic Journal' },
+            'reminders': { title: 'Islamic Reminders', filter: a => a.category === 'Islamic Reminders' },
+            'portraits': { title: 'Portraits & Eyes', filter: a => a.category === 'Portraits & Eyes' },
+            'ramadan': { title: 'Ramadan Cards', filter: a => a.category === 'Ramadan Cards' },
+            'other': { title: 'Other Artworks', filter: a => a.category === 'Other Artworks' }
+        };
+
+        // ===== DYNAMICALLY RENDER GALLERY =====
+        function renderGallery() {
+            const main = document.getElementById('gallery-main');
+            main.innerHTML = ''; // Clear current content
+
+            Object.keys(categoryMap).forEach(catId => {
+                const cat = categoryMap[catId];
+                const filtered = artworks.filter(cat.filter);
+
+                const section = document.createElement('section');
+                section.id = catId;
+                section.className = `category-section${catId === 'all' ? ' active' : ''}`;
+                section.dataset.category = catId;
+
+                section.innerHTML = `
+                    <h2 class="category-title">${cat.title}</h2>
+                    <div class="gallery-grid">
+                        ${filtered.map((art) => `
+                            <div class="art-card" onclick="openLightbox(${artworks.indexOf(art)})">
+                                <div class="art-image-container loading">
+                                    <img src="${art.src}" alt="${art.title}" class="art-image" loading="lazy" 
+                                        onerror="this.classList.add('error'); this.style.display='none';" 
+                                        onload="this.parentElement.classList.remove('loading')">
+                                    <div class="img-error"><div>Image Unavailable</div></div>
+                                </div>
+                                <div class="art-content">
+                                    <h3 class="art-title">${art.title}</h3>
+                                    <p class="art-subtitle">${art.category}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                main.appendChild(section);
+            });
+            
+            // Re-attach Intersection Observer to new cards
+            document.querySelectorAll('.art-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // ===== PARTICLES (STARFIELD) =====
+        function generateStars() {
+            const starfield = document.getElementById('starfield');
+            const count = window.innerWidth < 768 ? 80 : 150;
+
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                const size = Math.random() * 3 + 1;
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const duration = Math.random() * 4 + 2;
+                const opacity = Math.random() * 0.5 + 0.2;
+
+                star.style.cssText = `
+                    width: ${size}px; height: ${size}px;
+                    left: ${x}%; top: ${y}%;
+                    --duration: ${duration}s;
+                    --opacity: ${opacity};
+                `;
+
+                const rand = Math.random();
+                if (rand > 0.92) star.classList.add('golden');
+                else if (rand > 0.85) star.classList.add('bright');
+
+                starfield.appendChild(star);
+            }
+
+            for (let i = 0; i < 3; i++) {
+                const shooting = document.createElement('div');
+                shooting.className = 'shooting-star';
+                shooting.style.cssText = `
+                    top: ${Math.random() * 40}%;
+                    right: ${Math.random() * 30}%;
+                    --shoot-duration: ${Math.random() * 3 + 4}s;
+                    animation-delay: ${Math.random() * 5}s;
+                `;
+                starfield.appendChild(shooting);
+            }
+        }
+
+        // ===== CATEGORY SWITCHING =====
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const category = tab.dataset.category;
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                const activeSection = document.querySelector(`.category-section[data-category="${category}"]`);
+                activeSection.classList.add('active');
+
+                // Re-trigger card animations
+                activeSection.querySelectorAll('.art-card').forEach((card, i) => {
+                    card.style.animation = 'none';
+                    card.offsetHeight;
+                    card.style.animation = `cardEnter 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards`;
+                    card.style.animationDelay = (i * 0.04) + 's';
+                });
+            });
+        });
+
+        // ===== LOGIN SYSTEM =====
+        function showLogin() {
+            document.getElementById('loginOverlay').classList.add('active');
+            document.getElementById('loginUser').focus();
+        }
+
+        function attemptLogin() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            const error = document.getElementById('loginError');
+
+            if (user === OWNER_CREDENTIALS.username && pass === OWNER_CREDENTIALS.password) {
+                isOwner = true;
+                document.getElementById('loginOverlay').classList.remove('active');
+                document.getElementById('adminBar').classList.add('visible');
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('loginUser').value = '';
+                document.getElementById('loginPass').value = '';
+                error.classList.remove('visible');
+            } else {
+                error.classList.add('visible');
+                document.getElementById('loginPass').value = '';
+                document.getElementById('loginPass').focus();
+            }
+        }
+
+        function logout() {
+            isOwner = false;
+            document.getElementById('adminBar').classList.remove('visible');
+            document.getElementById('loginBtn').style.display = 'inline-block';
+        }
+
+        document.getElementById('loginPass').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        });
+
+        // ===== ADD ARTWORK =====
+        function openAddModal() {
+            if (!isOwner) return;
+            document.getElementById('addOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddModal() {
+            document.getElementById('addOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('addTitle').value = '';
+            document.getElementById('addImage').value = '';
+        }
+
+        function saveArtwork() {
+            if (!isOwner) return;
+
+            const title = document.getElementById('addTitle').value.trim();
+            const category = document.getElementById('addCategory').value;
+            const image = document.getElementById('addImage').value.trim();
+
+            if (!title || !image) {
+                alert('Please fill in at least the Title and Image URL/Name.');
+                return;
+            }
+
+            const newArt = {
+                src: image,
+                title: title,
+                category: category
+            };
+
+            artworks.push(newArt);
+
+            // Re-render gallery with new item
+            renderGallery();
+
+            closeAddModal();
+
+            // Update stats
+            document.getElementById('headerCount').innerHTML = `${artworks.length} Works • Official Archive`;
+
+            // Switch to 'All' tab to see it
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+            document.querySelector('.nav-tab[data-category="all"]').classList.add('active');
+            document.querySelector('.category-section[data-category="all"]').classList.add('active');
+            
+            // Scroll to bottom to see new art
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+
+        // ===== LIGHTBOX & ZOOM =====
+        let currentIndex = 0;
+        let zoomLevel = 1;
+        let isDragging = false;
+        let startX, startY, translateX = 0, translateY = 0;
+
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxWrapper = document.getElementById('lightbox-wrapper');
+        const zoomLevelEl = document.getElementById('zoom-level');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+
+        function updateZoomDisplay() {
+            zoomLevelEl.textContent = Math.round(zoomLevel * 100) + '%';
+            zoomInBtn.disabled = zoomLevel >= 5;
+            zoomOutBtn.disabled = zoomLevel <= 0.5;
+
+            if (zoomLevel > 1) {
+                lightboxImg.classList.add('zoomed');
+                lightboxWrapper.classList.add('is-zoomed');
+            } else {
+                lightboxImg.classList.remove('zoomed');
+                lightboxWrapper.classList.remove('is-zoomed');
+                translateX = 0;
+                translateY = 0;
+            }
+
+            applyTransform();
+        }
+
+        function applyTransform() {
+            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
+        }
+
+        function zoomIn() {
+            if (zoomLevel < 5) {
+                zoomLevel = Math.min(zoomLevel + 0.5, 5);
+                updateZoomDisplay();
+            }
+        }
+
+        function zoomOut() {
+            if (zoomLevel > 0.5) {
+                zoomLevel = Math.max(zoomLevel - 0.5, 0.5);
+                if (zoomLevel <= 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateZoomDisplay();
+            }
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            translateX = 0;
+            translateY = 0;
+            updateZoomDisplay();
+        }
+
+        function openLightbox(index) {
+            currentIndex = index;
+            const art = artworks[currentIndex];
+
+            resetZoom();
+
+            lightboxImg.style.animation = 'none';
+            lightboxImg.classList.remove('error');
+            document.getElementById('lightbox-error').classList.remove('active');
+            lightboxImg.style.display = 'block';
+
+            document.getElementById('lightbox-title').textContent = art.title;
+            document.getElementById('lightbox-category').textContent = art.category;
+
+            setTimeout(() => {
+                lightboxImg.src = art.src;
+                lightboxImg.alt = art.title;
+                lightboxImg.style.animation = 'zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            }, 10);
+
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => {
+                lightboxImg.src = '';
+                resetZoom();
+            }, 300);
+        }
+
+        function prevImage() {
+            currentIndex = (currentIndex - 1 + artworks.length) % artworks.length;
+            openLightbox(currentIndex);
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % artworks.length;
+            openLightbox(currentIndex);
+        }
+
+        // Drag to Pan
+        lightboxWrapper.addEventListener('mousedown', (e) => {
+            if (zoomLevel <= 1) return;
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            lightboxWrapper.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            applyTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            lightboxWrapper.style.cursor = zoomLevel > 1 ? 'grab' : 'default';
+        });
+
+        lightboxWrapper.addEventListener('touchstart', (e) => {
+            if (zoomLevel <= 1) return;
+            isDragging = true;
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
+            applyTransform();
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        lightboxWrapper.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            if (zoomLevel > 1) {
+                resetZoom();
+            } else {
+                zoomLevel = 2.5;
+                updateZoomDisplay();
+            }
+        });
+
+        // Keybindings & Wheel
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+                closeAddModal();
+                if (document.getElementById('loginOverlay').classList.contains('active')) {
+                    document.getElementById('loginOverlay').classList.remove('active');
+                }
+            }
+            if (!lightbox.classList.contains('active')) return;
+            switch(e.key) {
+                case 'ArrowLeft': prevImage(); break;
+                case 'ArrowRight': nextImage(); break;
+                case '+': case '=': zoomIn(); break;
+                case '-': zoomOut(); break;
+                case '0': resetZoom(); break;
+            }
+        });
+
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('lightbox-img-wrapper')) {
+                closeLightbox();
+            }
+        });
+
+        lightboxWrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        }, { passive: false });
+
+        // ===== INTERSECTION OBSERVER =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // ===== INITIALIZATION =====
+        generateStars();
+        renderGallery();
+
+    </script>
+</body>
+</html>
+
