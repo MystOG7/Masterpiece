@@ -112,8 +112,6 @@
             border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
         }
         .form-group textarea { min-height: 80px; resize: vertical; }
-        .file-upload-wrapper { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-        .file-upload-btn { background: #3949ab; color: white; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; text-align: center; border: none;}
         
         .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
         .modal-actions .btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; text-transform: uppercase; }
@@ -204,7 +202,7 @@
                 <input type="password" id="loginPass">
             </div>
             <button class="btn save" style="width:100%; padding:15px;" onclick="attemptLogin()">Sign In</button>
-            <p class="login-error" id="loginError">Invalid credentials.</p>
+            <p class="login-error" id="loginError" style="color: #ef5350; font-size: 0.8rem; text-align: center; margin-top: 12px; display: none;">Invalid credentials.</p>
         </div>
     </div>
 
@@ -270,12 +268,9 @@
             
             <div class="form-group" style="border: 1px dashed rgba(57,73,171,0.5); padding: 15px; border-radius: 12px;">
                 <label style="color:#ffd54f;">Image Source</label>
-                
                 <label style="font-size:0.7rem; margin-top:10px;">Option 1: Upload from Device</label>
-                <input type="file" id="artFile" accept="image/*" style="padding: 5px;">
-                
+                <input type="file" id="artFile" accept="image/*" style="padding: 5px; width: 100%;">
                 <div style="text-align: center; margin: 10px 0; color: #9fa8da; font-size:0.8rem;">— OR —</div>
-                
                 <label style="font-size:0.7rem;">Option 2: Paste Image URL / File Name</label>
                 <input type="text" id="artUrl" placeholder="https://... or image.jpg">
             </div>
@@ -323,7 +318,7 @@
     </footer>
 
     <script>
-        // ==================== DEFAULT DATA ====================
+        // ==================== DEFAULT DATA (All 78 Artworks) ====================
         const DEFAULT_SITE_DATA = {
             title: "ART GALLERY",
             subtitle: "A Curated Exhibition",
@@ -338,26 +333,90 @@
         ];
 
         const DEFAULT_ARTWORKS = [
-            { id: "art_0", src: "Screenshot_20260608_130926_Instagram.jpg", title: "Calligraphy Collection", category: "Islamic Calligraphy", desc: "A stunning ensemble of divine words." },
-            { id: "art_1", src: "Screenshot_20260608_130951_Instagram.jpg", title: "Minar-e-Pakistan", category: "Islamic Architecture", desc: "Patriotic spirit captured perfectly." },
-            { id: "art_2", src: "Screenshot_20260608_131011_Instagram.jpg", title: "Palestine Awareness Poster", category: "Awareness Art", desc: "Art with a powerful message for justice." },
-            { id: "art_3", src: "Screenshot_20260608_131000_Instagram.jpg", title: "Serene Mountain Landscape", category: "Nature & Landscapes", desc: "A window to Jannah." },
-            { id: "art_4", src: "Screenshot_20260608_131232_Instagram.jpg", title: "Surah Duha Journal", category: "Quranic Journal", desc: "Educational and stunningly beautiful." },
-            { id: "art_5", src: "Screenshot_20260608_131252_Instagram.jpg", title: "Elegant Reminders", category: "Islamic Reminders", desc: "Handwritten reminders filled with soothing verses." },
-            { id: "art_6", src: "IMG_20260608_153503_773.jpg", title: "Anime Eyes Sketch", category: "Portraits & Eyes", desc: "Expressive detail and soulful depth." },
-            { id: "art_7", src: "IMG_20260608_153541_537.jpg", title: "Colorful Ramadan Cards", category: "Ramadan Cards", desc: "Festive creativity and love." },
-            { id: "art_8", src: "Snapchat-1470198826(1).jpg", title: "Mystic Purple Moon", category: "Other Artworks", desc: "Dreamy, mystical vibe." },
-            // Keeping it short for the default array to save space, user can add more!
-            { id: "art_9", src: "IMG_20260608_132714_138.jpg", title: "Dervish Spirituality Journal", category: "Quranic Journal", desc: "Whirling dervish alongside elegant calligraphy." },
-            { id: "art_10", src: "IMG_20260608_153831_869.jpg", title: "Naruto Character Collage", category: "Other Artworks", desc: "Vibrant colors and unique style." },
-            { id: "art_11", src: "Screenshot_20260608_131112_Instagram.jpg", title: "And He is With You", category: "Islamic Calligraphy", desc: "Roses frame this beautiful verse." }
+            { id: "art_1", src: "Screenshot_20260608_130926_Instagram.jpg", title: "Calligraphy Collection", category: "Islamic Calligraphy", desc: "A stunning ensemble of divine words." },
+            { id: "art_2", src: "Screenshot_20260608_130939_Instagram.jpg", title: "Watercolor Calligraphy Strips", category: "Islamic Calligraphy", desc: "The way watercolor blends with sacred verses is absolutely magical." },
+            { id: "art_3", src: "Screenshot_20260608_130951_Instagram.jpg", title: "Minar-e-Pakistan", category: "Islamic Architecture", desc: "Patriotic spirit captured perfectly." },
+            { id: "art_4", src: "Screenshot_20260608_131000_Instagram.jpg", title: "Serene Mountain Landscape", category: "Nature & Landscapes", desc: "A window to Jannah." },
+            { id: "art_5", src: "Screenshot_20260608_131011_Instagram.jpg", title: "Palestine Awareness Poster", category: "Awareness Art", desc: "Art with a powerful message for justice." },
+            { id: "art_6", src: "Screenshot_20260608_131024_Instagram.jpg", title: "Anatomical Heart", category: "Other Artworks", desc: "Incredible anatomical detail." },
+            { id: "art_7", src: "Screenshot_20260608_131040_Instagram.jpg", title: "Moon Art", category: "Nature & Landscapes", desc: "Realistic and dreamy moon shading." },
+            { id: "art_8", src: "Screenshot_20260608_131106_Instagram.jpg", title: "Green Dome Mosque", category: "Islamic Architecture", desc: "Iconic green dome captured with reverence." },
+            { id: "art_9", src: "Screenshot_20260608_131112_Instagram.jpg", title: "And He is With You Calligraphy", category: "Islamic Calligraphy", desc: "Roses frame this beautiful verse." },
+            { id: "art_10", src: "Screenshot_20260608_131117_Instagram.jpg", title: "Ya Hussain Calligraphy", category: "Islamic Calligraphy", desc: "Deep red background with the golden dome." },
+            { id: "art_11", src: "Screenshot_20260608_131122_Instagram.jpg", title: "Hasbunallahu wa Ni'mal Wakeel", category: "Islamic Calligraphy", desc: "Keffiyeh border makes this so meaningful." },
+            { id: "art_12", src: "Screenshot_20260608_131131_Instagram.jpg", title: "La ilaha illallah", category: "Islamic Calligraphy", desc: "Golden calligraphy on dark green." },
+            { id: "art_13", src: "Screenshot_20260608_131139_Instagram.jpg", title: "Palestine Journal Spread", category: "Awareness Art", desc: "Watermelon flag design combined with floral calligraphy." },
+            { id: "art_14", src: "Screenshot_20260608_131153_Instagram.jpg", title: "Kaaba & Green Dome Cards", category: "Islamic Architecture", desc: "Two holy places in one beautiful frame." },
+            { id: "art_15", src: "Screenshot_20260608_131206_Instagram.jpg", title: "Mosque-Shaped Calligraphy", category: "Islamic Calligraphy", desc: "Calligraphy shaped into a mosque silhouette." },
+            { id: "art_16", src: "Screenshot_20260608_131213_Instagram.jpg", title: "Allah on Tree Bark", category: "Islamic Calligraphy", desc: "Rustic tree bark canvas with the powerful name of Allah." },
+            { id: "art_17", src: "Screenshot_20260608_131221_Instagram.jpg", title: "Candle & Flower Calligraphy", category: "Islamic Calligraphy", desc: "Glowing candle and radiant flower calligraphy." },
+            { id: "art_18", src: "Screenshot_20260608_131226_Instagram.jpg", title: "Dome Under the Moonlight", category: "Islamic Architecture", desc: "Night sky with the glowing moon and sacred green dome." },
+            { id: "art_19", src: "Screenshot_20260608_131232_Instagram.jpg", title: "Surah Duha Journal - Stars", category: "Quranic Journal", desc: "Starry night theme for Surah Duha." },
+            { id: "art_20", src: "Screenshot_20260608_131243_Instagram.jpg", title: "Surah Duha Journal - Roses", category: "Quranic Journal", desc: "Roses and torn paper aesthetic." },
+            { id: "art_21", src: "Screenshot_20260608_131300_Instagram.jpg", title: "Premium Reminder Collection", category: "Islamic Reminders", desc: "Sophisticated borders and vibrant text." },
+            { id: "art_22", src: "Screenshot_20260608_131306_Instagram.jpg", title: "Surah Duha Floral Spread", category: "Quranic Journal", desc: "Intricate floral borders framing Surah Duha." },
+            { id: "art_23", src: "Screenshot_20260608_131328_Instagram.jpg", title: "Sujood at Sunset", category: "Nature & Landscapes", desc: "Peace of prayer amidst a breathtaking sunset." },
+            { id: "art_24", src: "Screenshot_20260608_131334_Instagram.jpg", title: "Sunflower Hardship & Ease", category: "Nature & Landscapes", desc: "Bright sunflowers bringing the verse to life." },
+            { id: "art_25", src: "Screenshot_20260608_131342_Instagram.jpg", title: "Starry Night Islamic Journal", category: "Quranic Journal", desc: "Fusion of Van Gogh's style with sacred Islamic journaling." },
+            { id: "art_26", src: "Screenshot_20260608_131252_Instagram.jpg", title: "Elegant Quranic Reminders", category: "Islamic Reminders", desc: "Handwritten reminders filled with soothing verses." },
+            { id: "art_27", src: "Snapchat-1470198826(1).jpg", title: "Mystic Purple Moon", category: "Other Artworks", desc: "Swirling purples and blues inside this moon." },
+            { id: "art_28", src: "Snapchat-705301948.jpg", title: "Cosmic Garden Painting", category: "Other Artworks", desc: "Breathtaking cosmic garden with swirling galaxies." },
+            { id: "art_29", src: "Snapchat-1497800412.jpg", title: "Iridescent Eye on Grass", category: "Portraits & Eyes", desc: "Iridescent blue eye against the natural grass background." },
+            { id: "art_30", src: "IMG_20260608_132714_138.jpg", title: "Dervish Spirituality Journal", category: "Quranic Journal", desc: "Whirling dervish alongside elegant calligraphy." },
+            { id: "art_31", src: "IMG_20260608_153459_462.jpg", title: "Mosque Architecture Sketch", category: "Islamic Architecture", desc: "Architectural sketch of the mosque." },
+            { id: "art_32", src: "IMG_20260608_153500_951.jpg", title: "Arabic Calligraphy on Pink", category: "Islamic Calligraphy", desc: "Soft pink watercolor wash behind the bold Arabic calligraphy." },
+            { id: "art_33", src: "IMG_20260608_153502_427.jpg", title: "Palestine Solidarity Art", category: "Awareness Art", desc: "Watermelon colors and the keffiyeh pattern." },
+            { id: "art_34", src: "IMG_20260608_153503_773.jpg", title: "Anime Eyes Sketch", category: "Portraits & Eyes", desc: "Expressive detail and soulful depth." },
+            { id: "art_35", src: "IMG_20260608_153505_004.jpg", title: "Beautiful Eyes, Beautiful Soul", category: "Portraits & Eyes", desc: "Realistic eye paired with a heartfelt message." },
+            { id: "art_36", src: "IMG_20260608_153506_986.jpg", title: "Defying Fate Together", category: "Portraits & Eyes", desc: "Romantic message paired with beautifully drawn eyes." },
+            { id: "art_37", src: "IMG_20260608_153508_569.jpg", title: "Eyes Are Windows of the Soul", category: "Portraits & Eyes", desc: "Arabic proverb paired with stunningly realistic eyes." },
+            { id: "art_38", src: "IMG_20260608_153510_386.jpg", title: "Rainbow Beach Sunset", category: "Nature & Landscapes", desc: "Vibrant rainbow over a dreamy beach sunset." },
+            { id: "art_39", src: "IMG_20260608_153519_921.jpg", title: "Enchanted Forest Stream", category: "Nature & Landscapes", desc: "Flowing stream and wildflowers." },
+            { id: "art_40", src: "IMG_20260608_153521_537.jpg", title: "Sunset Calligraphy Art", category: "Islamic Calligraphy", desc: "Bold Arabic calligraphy against a warm sunset gradient." },
+            { id: "art_41", src: "IMG_20260608_153529_186.jpg", title: "Tulip & Bismillah Art", category: "Islamic Calligraphy", desc: "Colorful tulips framing beautiful Bismillah calligraphy." },
+            { id: "art_42", src: "IMG_20260608_153530_639.jpg", title: "Surah Al-Ikhlas Journal Page", category: "Quranic Journal", desc: "Educational and beautifully organized journal spread." },
+            { id: "art_43", src: "IMG_20260608_153531_913.jpg", title: "Surah Al-Falaq Journal", category: "Quranic Journal", desc: "Creative doodles and colorful accents." },
+            { id: "art_44", src: "IMG_20260608_153535_675.jpg", title: "Surah An-Nas Journal", category: "Quranic Journal", desc: "Green-themed page with money border design." },
+            { id: "art_45", src: "IMG_20260608_153537_137.jpg", title: "Surah Al-Kafirun Journal", category: "Quranic Journal", desc: "Pink and purple watercolor splashes." },
+            { id: "art_46", src: "IMG_20260608_153538_463.jpg", title: "Surah Al-Kawthar Journal", category: "Quranic Journal", desc: "Blue water-themed page with a fountain illustration." },
+            { id: "art_47", src: "IMG_20260608_153541_537.jpg", title: "Colorful Ramadan Cards", category: "Ramadan Cards", desc: "Delightful collection of colorful Ramadan Mubarak cards." },
+            { id: "art_48", src: "IMG_20260608_153553_039.jpg", title: "Red & Gold Ramadan Cards", category: "Ramadan Cards", desc: "Elegant and celebratory red and gold collection." },
+            { id: "art_49", src: "IMG_20260608_153603_086.jpg", title: "Pink Ramadan Cards Collection", category: "Ramadan Cards", desc: "Adorable pink Ramadan Mubarak cards." },
+            { id: "art_50", src: "IMG_20260608_153604_569.jpg", title: "Blue & Pink Ramadan Cards", category: "Ramadan Cards", desc: "Combination of blue and pink with beautiful mosque silhouettes." },
+            { id: "art_51", src: "IMG_20260608_153607_695.jpg", title: "Minimalist Blue Ramadan Cards", category: "Ramadan Cards", desc: "Minimalist blue cards with elegant mosque designs." },
+            { id: "art_52", src: "IMG_20260608_153609_292.jpg", title: "Floral Ramadan in Advance Cards", category: "Ramadan Cards", desc: "Thoughtful and beautifully decorated watercolor flowers." },
+            { id: "art_53", src: "IMG_20260608_153614_861.jpg", title: "Purple & Pink Ramadan Cards", category: "Ramadan Cards", desc: "Purple and pink gradient cards with crescent moons." },
+            { id: "art_54", src: "IMG_20260608_153616_136.jpg", title: "Surah Baqarah Calligraphy", category: "Islamic Calligraphy", desc: "Magnificent calligraphy with ornate geometric borders." },
+            { id: "art_55", src: "IMG_20260608_153617_878.jpg", title: "Ar-Rahman Gold Calligraphy", category: "Islamic Calligraphy", desc: "Golden calligraphy against blue geometric patterns." },
+            { id: "art_56", src: "IMG_20260608_153620_912.jpg", title: "Dua, Sabr & Shukr Floral Cards", category: "Islamic Calligraphy", desc: "Elegant roses intertwined with sacred words." },
+            { id: "art_57", src: "IMG_20260608_153639_988.jpg", title: "Sabr on Rainbow Watercolor", category: "Islamic Calligraphy", desc: "The word Sabr on a vibrant rainbow watercolor background." },
+            { id: "art_58", src: "IMG_20260608_153700_888.jpg", title: "Salamun Qaulan Calligraphy", category: "Islamic Calligraphy", desc: "Graceful calligraphy on lined paper." },
+            { id: "art_59", src: "IMG_20260608_153730_893.jpg", title: "Importance of Salah Journal", category: "Quranic Journal", desc: "Educational journal page with a praying figure." },
+            { id: "art_60", src: "IMG_20260608_153732_491.jpg", title: "Salah Benefits Mosaic Journal", category: "Quranic Journal", desc: "Detailed journal with a stunning blue mosaic border." },
+            { id: "art_61", src: "IMG_20260608_153733_935.jpg", title: "Improve Your Salah Guide", category: "Quranic Journal", desc: "Practical tips in both Urdu and English." },
+            { id: "art_62", src: "IMG_20260608_153735_740.jpg", title: "Sunflower Watercolor Painting", category: "Nature & Landscapes", desc: "Bright and cheerful sunflowers in watercolor." },
+            { id: "art_63", src: "IMG_20260608_153737_351.jpg", title: "Tulip Colored Pencil Drawing", category: "Nature & Landscapes", desc: "Amazing detail and beautiful shading in colored pencil." },
+            { id: "art_64", src: "IMG_20260608_153739_018.jpg", title: "Disenthal Freedom Art", category: "Other Artworks", desc: "Conceptual art with a handprint and spider web." },
+            { id: "art_65", src: "IMG_20260608_153740_401.jpg", title: "Space Popup Book", category: "Other Artworks", desc: "Creative 3D paper engineering and cosmic imagination." },
+            { id: "art_66", src: "IMG_20260608_153741_893.jpg", title: "Tangled Lanterns Scene", category: "Other Artworks", desc: "Romantic and magical lantern scene with castle and boat." },
+            { id: "art_67", src: "IMG_20260608_153743_826.jpg", title: "Hand-Painted Sunflower Pen Holder", category: "Other Artworks", desc: "Practical work of art showing true artistic spirit." },
+            { id: "art_68", src: "IMG_20260608_153745_793.jpg", title: "Anime Portrait with Hat", category: "Portraits & Eyes", desc: "Cool and expressive portrait with vibrant personality." },
+            { id: "art_69", src: "IMG_20260608_153759_903.jpg", title: "Fa Inna Ma'al Usri Yusra - Pink Mosque Art", category: "Islamic Calligraphy", desc: "Pink watercolor piece surrounded by mosque domes and stars." },
+            { id: "art_70", src: "IMG_20260608_153802_545.jpg", title: "99 Names of Allah Colorful Grid", category: "Islamic Calligraphy", desc: "Stunning grid painted in vibrant watercolor with golden borders." },
+            { id: "art_71", src: "IMG_20260608_153804_712.jpg", title: "Latifun Khabir Gold Calligraphy", category: "Islamic Calligraphy", desc: "Golden calligraphy on a dark mystical background." },
+            { id: "art_72", src: "IMG_20260608_153811_271.jpg", title: "Excellent Reward for Righteous Workers", category: "Islamic Calligraphy", desc: "Watercolor roses and soft green background." },
+            { id: "art_73", src: "IMG_20260608_153827_720.jpg", title: "Sunflower Verse Art", category: "Islamic Calligraphy", desc: "Bright sunflower bursting with a beautiful verse." },
+            { id: "art_74", src: "IMG_20260608_153830_263.jpg", title: "Rose Silhouette in Hand", category: "Other Artworks", desc: "Dramatic black silhouette holding a rose." },
+            { id: "art_75", src: "IMG_20260608_153831_869.jpg", title: "Naruto Character Collage", category: "Other Artworks", desc: "Amazing collection drawn with vibrant colors." },
+            { id: "art_76", src: "IMG_20260608_153833_704.jpg", title: "Traditional Sari Portrait", category: "Portraits & Eyes", desc: "Beautiful portrait of a woman in a colorful traditional sari." },
+            { id: "art_77", src: "IMG_20260608_153835_187.jpg", title: "Noor Ki Dua - Handwritten Prayer", category: "Islamic Calligraphy", desc: "Heartfelt handwritten dua with red accents." },
+            { id: "art_78", src: "IMG_20260608_153838_529.jpg", title: "Pixel Sunset Cityscape", category: "Other Artworks", desc: "Creative pixel-art style cityscape at sunset." }
         ];
 
         // ==================== STATE MANAGEMENT ====================
         let siteData = JSON.parse(localStorage.getItem('ag_site')) || { ...DEFAULT_SITE_DATA };
         let categories = JSON.parse(localStorage.getItem('ag_cats')) || [ ...DEFAULT_CATEGORIES ];
         let artworks = JSON.parse(localStorage.getItem('ag_arts')) || JSON.parse(JSON.stringify(DEFAULT_ARTWORKS));
-        let isOwner = false;
 
         function saveState() {
             localStorage.setItem('ag_site', JSON.stringify(siteData));
@@ -436,7 +495,6 @@
         
         function attemptLogin() {
             if (document.getElementById('loginUser').value === 'owner' && document.getElementById('loginPass').value === 'owner123') {
-                isOwner = true;
                 document.body.classList.add('admin-mode');
                 document.getElementById('adminBar').classList.add('visible');
                 document.getElementById('loginBtn').style.display = 'none';
@@ -447,7 +505,6 @@
         }
 
         function logout() {
-            isOwner = false;
             document.body.classList.remove('admin-mode');
             document.getElementById('adminBar').classList.remove('visible');
             document.getElementById('loginBtn').style.display = 'inline-block';
@@ -456,6 +513,7 @@
         function closeModals() {
             document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
             document.body.style.overflow = '';
+            document.getElementById('loginError').style.display = 'none';
         }
 
         // ==================== SITE SETTINGS ====================
@@ -570,6 +628,7 @@
                 buildInterface(); 
                 closeModals();
                 switchTab(cat);
+                document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
             } catch (e) {
                 alert("Storage Quota Exceeded! Phone images are too large. Please use URLs instead, or delete some items.");
             }
@@ -579,11 +638,12 @@
             if(confirm("Are you sure you want to delete this artwork?")) {
                 artworks = artworks.filter(a => a.id !== id);
                 saveState(); buildInterface();
+                document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
             }
         }
 
         function factoryReset() {
-            if(confirm("WARNING: This will wipe all your custom changes and restore the default template. Continue?")) {
+            if(confirm("WARNING: This will wipe all your custom changes and restore the default template with 78 artworks. Continue?")) {
                 localStorage.clear();
                 location.reload();
             }
@@ -595,7 +655,7 @@
             if(!art) return;
             document.getElementById('lightbox-img').src = art.src;
             document.getElementById('lightbox-title').innerText = art.title;
-            document.getElementById('lightbox-category').innerText = art.category;
+            document.getElementById('lightbox-category').innerText = art.desc || art.category;
             document.getElementById('lightbox').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
