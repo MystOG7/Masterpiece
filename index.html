@@ -1,770 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Artwork | Curated Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        :root {
-            --midnight: #0a0e27; --deep-blue: #0f1538; --navy: #1a237e;
-            --royal-blue: #283593; --azure: #3949ab; --sky-blue: #5c6bc0;
-            --pale-blue: #9fa8da; --silver: #c5cae9; --moon-glow: #fff9c4;
-            --star-gold: #ffd54f; --warm-gold: #ffca28; --amber: #ff8f00;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(180deg, #02040a 0%, #0a0e27 15%, #0f1538 35%, #1a237e 60%, #0f1538 85%, #02040a 100%);
-            background-attachment: fixed; color: #e8eaf6;
-            min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
-        }
-
-        /* ===== BACKGROUND EFFECTS ===== */
-        .starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-        .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
-        .star.bright { box-shadow: 0 0 6px 2px rgba(255,255,255,0.6), 0 0 12px 4px rgba(255,215,79,0.3); }
-        .star.golden { background: var(--star-gold); box-shadow: 0 0 8px 2px rgba(255,213,79,0.5), 0 0 16px 4px rgba(255,213,79,0.2); }
-        @keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(1); } 50% { opacity: calc(var(--opacity) * 2); transform: scale(1.3); } }
-        
-        .moon-container { position: fixed; top: 8%; right: 10%; z-index: 1; pointer-events: none; }
-        .moon {
-            width: 100px; height: 100px; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fffde7, #fff9c4 40%, #ffd54f 100%);
-            box-shadow: 0 0 40px 10px rgba(255,249,196,0.3), 0 0 80px 20px rgba(255,213,79,0.15), inset -10px -10px 20px rgba(255,167,38,0.2);
-            animation: moonPulse 4s ease-in-out infinite;
-        }
-        @keyframes moonPulse {
-            0%, 100% { box-shadow: 0 0 40px 10px rgba(255,249,196,0.3), 0 0 80px 20px rgba(255,213,79,0.15); }
-            50% { box-shadow: 0 0 60px 15px rgba(255,249,196,0.4), 0 0 100px 30px rgba(255,213,79,0.2); }
-        }
-
-        .hills { position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; pointer-events: none; z-index: 1; opacity: 0.25; }
-        .hill { position: absolute; bottom: 0; border-radius: 100% 100% 0 0; background: linear-gradient(180deg, rgba(13,51,24,0.4), rgba(2,4,10,0.8)); }
-        .hill:nth-child(1) { width: 60%; height: 120px; left: -10%; }
-        .hill:nth-child(2) { width: 50%; height: 80px; right: -5%; }
-        .hill:nth-child(3) { width: 40%; height: 60px; left: 30%; }
-
-        /* ===== HEADER ===== */
-        header { position: relative; z-index: 10; text-align: center; padding: 70px 20px 40px; overflow: hidden; }
-        .header-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(57,73,171,0.15), transparent 70%); pointer-events: none;
-        }
-        h1 {
-            font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; margin-bottom: 12px;
-            background: linear-gradient(135deg, #fff 0%, #fff9c4 20%, #ffd54f 40%, #fff 60%, #c5cae9 80%, #fff 100%);
-            background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            letter-spacing: 6px; text-transform: uppercase; animation: shimmerText 5s linear infinite; filter: drop-shadow(0 0 30px rgba(255,213,79,0.3));
-        }
-        @keyframes shimmerText { 0% { background-position: 0% center; } 100% { background-position: 300% center; } }
-        .subtitle { font-family: 'Lora', serif; font-size: clamp(0.9rem, 2.5vw, 1.2rem); color: #9fa8da; font-style: italic; letter-spacing: 5px; text-transform: uppercase; }
-        .divider { width: 100px; height: 2px; background: linear-gradient(90deg, transparent, #ffd54f, #3949ab, transparent); margin: 25px auto; border-radius: 2px; animation: glowLine 3s ease-in-out infinite; }
-        @keyframes glowLine {
-            0%, 100% { width: 100px; opacity: 0.6; box-shadow: 0 0 5px rgba(255,213,79,0.3); }
-            50% { width: 160px; opacity: 1; box-shadow: 0 0 20px rgba(255,213,79,0.6), 0 0 40px rgba(57,73,171,0.3); }
-        }
-        .art-count { font-size: 0.85rem; color: #9fa8da; opacity: 0.8; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif;}
-
-        /* ===== ADMIN UI ===== */
-        .admin-bar {
-            position: fixed; top: 0; left: 0; right: 0; background: rgba(2,4,10,0.95); backdrop-filter: blur(20px);
-            z-index: 200; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(57,73,171,0.2); transform: translateY(-100%); transition: transform 0.4s ease;
-        }
-        .admin-bar.visible { transform: translateY(0); }
-        .admin-bar-title { font-family: 'Cinzel', serif; font-size: 0.85rem; color: #ffd54f; letter-spacing: 3px; text-transform: uppercase; }
-        .admin-bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .admin-btn {
-            padding: 8px 16px; border-radius: 20px; font-family: 'Poppins', sans-serif; font-size: 0.75rem;
-            font-weight: 500; cursor: pointer; transition: all 0.3s ease; border: none; letter-spacing: 1px; text-transform: uppercase;
-        }
-        .admin-btn.add { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
-        .admin-btn.settings { background: rgba(57,73,171,0.2); color: #ffd54f; border: 1px solid rgba(255,213,79,0.3); }
-        .admin-btn.logout { background: transparent; color: #ef5350; border: 1px solid rgba(239,83,80,0.4); }
-        
-        .card-admin-controls { position: absolute; top: 10px; left: 10px; z-index: 10; display: none; gap: 8px; }
-        body.admin-mode .card-admin-controls { display: flex; }
-        .card-btn {
-            background: rgba(10,14,39,0.9); border: 1px solid #ffd54f; color: #ffd54f;
-            width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; backdrop-filter: blur(5px);
-        }
-        .card-btn.delete { border-color: #ef5350; color: #ef5350; }
-        .card-btn:hover { transform: scale(1.1); }
-
-        /* ===== MODALS ===== */
-        .overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,4,10,0.95);
-            backdrop-filter: blur(20px); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;
-        }
-        .overlay.active { display: flex; }
-        .modal-box {
-            background: linear-gradient(145deg, rgba(26,35,126,0.3), rgba(10,14,39,0.6));
-            border-radius: 24px; padding: 40px; width: 100%; max-width: 500px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(57,73,171,0.3);
-            border: 1px solid rgba(57,73,171,0.2); max-height: 90vh; overflow-y: auto;
-        }
-        .modal-box h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: #ffd54f; text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.8rem; color: #9fa8da; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px 16px; background: rgba(10,14,39,0.6); border: 1px solid rgba(57,73,171,0.3);
-            border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
-        }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-        .modal-actions .btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; text-transform: uppercase; }
-        .btn.save { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
-        .btn.cancel { background: transparent; color: #9fa8da; border: 1px solid rgba(57,73,171,0.4); }
-        .btn.danger { background: rgba(239,83,80,0.2); color: #ef5350; border: 1px solid rgba(239,83,80,0.4); }
-        .cat-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;}
-        .cat-item { display: flex; justify-content: space-between; background: rgba(10,14,39,0.6); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(57,73,171,0.3);}
-        .cat-delete { color: #ef5350; cursor: pointer; font-weight: bold; background: none; border: none;}
-
-        /* ===== NAVIGATION ===== */
-        .nav-container {
-            position: sticky; top: 0; z-index: 100; background: rgba(10, 14, 39, 0.85); backdrop-filter: blur(20px);
-            padding: 14px 10px; border-bottom: 1px solid rgba(57,73,171,0.2); overflow-x: auto; scrollbar-width: none;
-        }
-        .nav-tabs { display: flex; gap: 10px; min-width: max-content; justify-content: flex-start; padding: 0 10px; margin: 0 auto; max-width: 1200px; }
-        .nav-tab {
-            padding: 10px 24px; border: 1px solid rgba(57,73,171,0.3); background: transparent; color: #9fa8da;
-            border-radius: 30px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .nav-tab.active { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; border-color: transparent; box-shadow: 0 0 20px rgba(57,73,171,0.5); }
-
-        /* ===== MAIN CONTENT & CARDS ===== */
-        main { position: relative; z-index: 5; max-width: 1400px; margin: 0 auto; padding: 40px 15px 60px; }
-        .category-section { display: none; animation: fadeInUp 0.8s ease; }
-        .category-section.active { display: block; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .category-title { font-family: 'Cinzel', serif; font-size: 2rem; color: #ffd54f; text-align: center; margin-bottom: 30px; letter-spacing: 3px; text-transform: uppercase; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
-
-        .art-card {
-            background: rgba(10,14,39,0.5); border-radius: 12px; overflow: hidden; position: relative;
-            border: 1px solid rgba(57,73,171,0.15); transition: all 0.3s ease; cursor: pointer;
-        }
-        .art-card:hover { transform: translateY(-5px); border-color: rgba(57,73,171,0.5); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .art-image-container { position: relative; aspect-ratio: 4/5; background: rgba(10,14,39,0.8); }
-        .art-image { width: 100%; height: 100%; object-fit: cover; }
-        .art-content { padding: 20px; background: rgba(10,14,39,0.8); border-top: 1px solid rgba(57,73,171,0.2); }
-        .art-title { font-family: 'Cinzel', serif; color: #fff; font-size: 1.1rem; margin-bottom: 5px; }
-        .art-subtitle { color: #9fa8da; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        .img-error {
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            color: #9fa8da; font-size: 0.85rem; text-align: center; padding: 20px;
-        }
-        .art-image.error + .img-error {
-            display: flex; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,14,39,0.9);
-        }
-
-        /* ===== ADVANCED LIGHTBOX ===== */
-        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,4,10,0.98); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(20px); overflow: hidden; }
-        .lightbox.active { display: flex; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .lightbox-img-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: grab; touch-action: none; }
-        .lightbox-img-wrapper:active { cursor: grabbing; }
-        .lightbox-img-wrapper.is-zoomed { cursor: grab; }
-        
-        .lightbox-img { max-width: 95%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(57,73,171,0.2); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: center center; user-select: none; -webkit-user-drag: none; }
-        .lightbox-img.zoomed { max-width: none; max-height: none; transition: none; }
-        .lightbox-img.error { display: none; }
-        
-        .lightbox-error { display: none; color: #9fa8da; flex-direction: column; align-items: center; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
-        .lightbox-error.active { display: flex; }
-
-        .lightbox-controls {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 1002; background: rgba(10,14,39,0.8); backdrop-filter: blur(20px); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(57,73,171,0.4); box-shadow: 0 8px 32px rgba(0,0,0,0.6); opacity: 0; transition: opacity 0.3s ease;
-        }
-        .lightbox.active .lightbox-controls { opacity: 1; }
-        .lightbox-controls:hover { opacity: 1 !important; }
-        
-        .lb-btn {
-            width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,213,79,0.4); background: rgba(26,35,126,0.6); color: white; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
-        }
-        .lb-btn:hover { background: rgba(57,73,171,0.8); transform: scale(1.1); box-shadow: 0 0 15px rgba(255,213,79,0.3); }
-        .lb-zoom-level { display: flex; align-items: center; justify-content: center; min-width: 60px; color: #ffd54f; font-size: 0.85rem; font-weight: 500; font-family: 'Poppins', sans-serif; }
-
-        .lightbox-close { position: absolute; top: 24px; right: 24px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; z-index: 1003; backdrop-filter: blur(10px); }
-        .lightbox-close:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
-
-        .lightbox-info { position: absolute; top: 24px; left: 24px; z-index: 1001; background: rgba(10,14,39,0.8); backdrop-filter: blur(10px); padding: 12px 24px; border-radius: 12px; border: 1px solid rgba(57,73,171,0.3); max-width: 300px; }
-        .lightbox-info h3 { font-family: 'Cinzel', serif; color: #ffd54f; font-size: 1.1rem; margin-bottom: 4px; letter-spacing: 1px; }
-        .lightbox-info p { color: #9fa8da; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        footer { text-align: center; padding: 50px 20px; border-top: 1px solid rgba(57,73,171,0.15); }
-        .footer-text { font-family: 'Lora', serif; color: #5c6bc0; font-style: italic; margin-bottom: 10px;}
-        .footer-sub { color: #9fa8da; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;}
-
-        @media (max-width: 768px) {
-            .admin-bar { flex-direction: column; gap: 10px; }
-            .lightbox-close { width: 42px; height: 42px; top: 15px; right: 15px; }
-            .lightbox-controls { bottom: 20px; padding: 8px 15px; gap: 8px; }
-            .lb-btn { width: 38px; height: 38px; font-size: 1rem; }
-            .lightbox-info { max-width: 200px; padding: 10px 15px; top: 15px; left: 15px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VirtualArtGallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+    --midnight: #0a0e27; --deep-blue: #0f1538; --navy: #1a237e;
+    --royal-blue: #283593; --azure: #3949ab; --sky-blue: #5c6bc0;
+    --pale-blue: #9fa8da; --silver: #c5cae9; --moon-glow: #fff9c4;
+    --star-gold: #ffd54f; --warm-gold: #ffca28; --amber: #ff8f00;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #02040a 0%, #0a0e27 15%, #0f1538 35%, #1a237e 60%, #0f1538 85%, #02040a 100%);
+    background-attachment: fixed; color: #e8eaf6;
+    min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+.starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+.star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--duration) infinite ease-in-out; opacity: var(--opacity); }
+.star.bright { box-shadow: 0 0 6px 2px rgba(255,255,255,0.6), 0 0 12px 4px rgba(255,215,79,0.3); }
+.star.golden { background: var(--star-gold); box-shadow: 0 0 8px 2px rgba(255,213,79,0.5), 0 0 16px 4px rgba(255,213,79,0.2); }
+@keyframes twinkle { 0%, 100% { opacity: var(--opacity); transform: scale(1); } 50% { opacity: calc(var(--opacity) * 2); transform: scale(1.3); } }
+.moon-container { position: fixed; top: 8%; right: 10%; z-index: 1; pointer-events: none; }
+.moon {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fffde7, #fff9c4 40%, #ffd54f 100%);
+    box-shadow: 0 0 40px 10px rgba(255,249,196,0.3), 0 0 80px 20px rgba(255,213,79,0.15), inset -10px -10px 20px rgba(255,167,38,0.2);
+    animation: moonPulse 4s ease-in-out infinite;
+}
+@keyframes moonPulse {
+    0%, 100% { box-shadow: 0 0 40px 10px rgba(255,249,196,0.3), 0 0 80px 20px rgba(255,213,79,0.15); }
+    50% { box-shadow: 0 0 60px 15px rgba(255,249,196,0.4), 0 0 100px 30px rgba(255,213,79,0.2); }
+}
+.hills { position: fixed; bottom: 0; left: 0; width: 100%; height: 200px; pointer-events: none; z-index: 1; opacity: 0.25; }
+.hill { position: absolute; bottom: 0; border-radius: 100% 100% 0 0; background: linear-gradient(180deg, rgba(13,51,24,0.4), rgba(2,4,10,0.8)); }
+.hill:nth-child(1) { width: 60%; height: 120px; left: -10%; }
+.hill:nth-child(2) { width: 50%; height: 80px; right: -5%; }
+.hill:nth-child(3) { width: 40%; height: 60px; left: 30%; }
+header { position: relative; z-index: 10; text-align: center; padding: 70px 20px 40px; overflow: hidden; }
+h1 {
+    font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, #fff9c4 20%, #ffd54f 40%, #fff 60%, #c5cae9 80%, #fff 100%);
+    background-size: 300% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    letter-spacing: 6px; text-transform: uppercase; animation: shimmerText 5s linear infinite;
+}
+@keyframes shimmerText { 0% { background-position: 0% center; } 100% { background-position: 300% center; } }
+.subtitle { font-family: 'Lora', serif; font-size: clamp(0.9rem, 2.5vw, 1.2rem); color: #9fa8da; font-style: italic; letter-spacing: 5px; text-transform: uppercase; }
+.divider { width: 100px; height: 2px; background: linear-gradient(90deg, transparent, #ffd54f, #3949ab, transparent); margin: 25px auto; border-radius: 2px; }
+.art-count { font-size: 0.85rem; color: #9fa8da; opacity: 0.8; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+.admin-bar {
+    position: fixed; top: 0; left: 0; right: 0; background: rgba(2,4,10,0.95); backdrop-filter: blur(20px);
+    z-index: 200; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid rgba(57,73,171,0.2); transform: translateY(-100%); transition: transform 0.4s ease;
+}
+.admin-bar.visible { transform: translateY(0); }
+.admin-bar-title { font-family: 'Cinzel', serif; font-size: 0.85rem; color: #ffd54f; letter-spacing: 3px; text-transform: uppercase; }
+.admin-bar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.admin-btn {
+    padding: 8px 16px; border-radius: 20px; font-family: 'Poppins', sans-serif; font-size: 0.75rem;
+    font-weight: 500; cursor: pointer; transition: all 0.3s ease; border: none; letter-spacing: 1px; text-transform: uppercase;
+}
+.admin-btn.add { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
+.admin-btn.settings { background: rgba(57,73,171,0.2); color: #ffd54f; border: 1px solid rgba(255,213,79,0.3); }
+.admin-btn.logout { background: transparent; color: #ef5350; border: 1px solid rgba(239,83,80,0.4); }
+.card-admin-controls { position: absolute; top: 10px; left: 10px; z-index: 10; display: none; gap: 8px; }
+body.admin-mode .card-admin-controls { display: flex; }
+.card-btn {
+    background: rgba(10,14,39,0.9); border: 1px solid #ffd54f; color: #ffd54f;
+    width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; backdrop-filter: blur(5px);
+}
+.card-btn.delete { border-color: #ef5350; color: #ef5350; }
+.card-btn:hover { transform: scale(1.1); }
+.overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2,4,10,0.95);
+    backdrop-filter: blur(20px); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;
+}
+.overlay.active { display: flex; }
+.modal-box {
+    background: linear-gradient(145deg, rgba(26,35,126,0.3), rgba(10,14,39,0.6));
+    border-radius: 24px; padding: 40px; width: 100%; max-width: 500px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(57,73,171,0.3);
+    border: 1px solid rgba(57,73,171,0.2); max-height: 90vh; overflow-y: auto;
+}
+.modal-box h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: #ffd54f; text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.8rem; color: #9fa8da; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 16px; background: rgba(10,14,39,0.6); border: 1px solid rgba(57,73,171,0.3);
+    border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem;
+}
+.form-group textarea { min-height: 80px; resize: vertical; }
+.modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+.modal-actions .btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; text-transform: uppercase; }
+.btn.save { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; }
+.btn.cancel { background: transparent; color: #9fa8da; border: 1px solid rgba(57,73,171,0.4); }
+.btn.danger { background: rgba(239,83,80,0.2); color: #ef5350; border: 1px solid rgba(239,83,80,0.4); }
+.cat-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;}
+.cat-item { display: flex; justify-content: space-between; background: rgba(10,14,39,0.6); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(57,73,171,0.3);}
+.cat-delete { color: #ef5350; cursor: pointer; font-weight: bold; background: none; border: none;}
+.nav-container {
+    position: sticky; top: 0; z-index: 100; background: rgba(10, 14, 39, 0.85); backdrop-filter: blur(20px);
+    padding: 14px 10px; border-bottom: 1px solid rgba(57,73,171,0.2); overflow-x: auto; scrollbar-width: none;
+}
+.nav-tabs { display: flex; gap: 10px; min-width: max-content; justify-content: flex-start; padding: 0 10px; margin: 0 auto; max-width: 1200px; }
+.nav-tab {
+    padding: 10px 24px; border: 1px solid rgba(57,73,171,0.3); background: transparent; color: #9fa8da;
+    border-radius: 30px; cursor: pointer; font-size: 0.85rem; transition: all 0.3s ease; text-transform: uppercase;
+}
+.nav-tab.active { background: linear-gradient(135deg, #3949ab, #1a237e); color: white; border-color: transparent; box-shadow: 0 0 20px rgba(57,73,171,0.5); }
+main { position: relative; z-index: 5; max-width: 1400px; margin: 0 auto; padding: 40px 15px 60px; }
+.category-section { display: none; animation: fadeInUp 0.8s ease; }
+.category-section.active { display: block; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.category-title { font-family: 'Cinzel', serif; font-size: 2rem; color: #ffd54f; text-align: center; margin-bottom: 30px; letter-spacing: 3px; text-transform: uppercase; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
+.art-card {
+    background: rgba(10,14,39,0.5); border-radius: 12px; overflow: hidden; position: relative;
+    border: 1px solid rgba(57,73,171,0.15); transition: all 0.3s ease; cursor: pointer;
+}
+.art-card:hover { transform: translateY(-5px); border-color: rgba(57,73,171,0.5); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+.art-image-container { position: relative; aspect-ratio: 4/5; background: rgba(10,14,39,0.8); }
+.art-image { width: 100%; height: 100%; object-fit: cover; }
+.art-content { padding: 20px; background: rgba(10,14,39,0.8); border-top: 1px solid rgba(57,73,171,0.2); }
+.art-title { font-family: 'Cinzel', serif; color: #fff; font-size: 1.1rem; margin-bottom: 5px; }
+.art-subtitle { color: #9fa8da; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+.lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,4,10,0.98); z-index: 2000; justify-content: center; align-items: center; }
+.lightbox.active { display: flex; }
+.lightbox-img-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.lightbox-img { max-width: 95%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(57,73,171,0.2); }
+.lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 2rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; z-index: 2001; }
+.lightbox-info { position: absolute; bottom: 30px; background: rgba(10,14,39,0.8); padding: 15px 30px; border-radius: 30px; border: 1px solid rgba(57,73,171,0.3); text-align: center;}
+.lightbox-info h3 { font-family: 'Cinzel', serif; color: #ffd54f; margin-bottom: 5px;}
+.lightbox-info p { color: #9fa8da; font-size: 0.8rem; }
+footer { text-align: center; padding: 50px 20px; border-top: 1px solid rgba(57,73,171,0.15); }
+.footer-text { font-family: 'Lora', serif; color: #5c6bc0; font-style: italic; margin-bottom: 10px;}
+.footer-sub { color: #9fa8da; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;}
+@media (max-width: 768px) {
+    .admin-bar { flex-direction: column; gap: 10px; }
+    .lightbox-info { bottom: 10px; width: 90%; }
+}
+</style>
 </head>
 <body>
-
-    <div class="admin-bar" id="adminBar">
-        <span class="admin-bar-title">✦ Owner Panel</span>
-        <div class="admin-bar-actions">
-            <button class="admin-btn add" onclick="openArtModal()">+ Add Art</button>
-            <button class="admin-btn settings" onclick="openCatModal()">Categories</button>
-            <button class="admin-btn settings" onclick="openSettingsModal()">Site Settings</button>
-            <button class="admin-btn logout" onclick="logout()">Logout</button>
+<div class="admin-bar" id="adminBar">
+    <span class="admin-bar-title">✦ Owner Panel</span>
+    <div class="admin-bar-actions">
+        <button class="admin-btn add" onclick="openArtModal()">+ Add Art</button>
+        <button class="admin-btn settings" onclick="openCatModal()">Categories</button>
+        <button class="admin-btn settings" onclick="openSettingsModal()">Site Settings</button>
+        <button class="admin-btn logout" onclick="logout()">Logout</button>
+    </div>
+</div>
+<div class="overlay" id="loginOverlay">
+    <div class="modal-box">
+        <h2>Owner Access</h2>
+        <div class="form-group"><label>Username</label><input type="text" id="loginUser"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
+        <button class="btn save" style="width:100%; padding:15px;" onclick="attemptLogin()">Sign In</button>
+        <p class="login-error" id="loginError" style="color: #ef5350; font-size: 0.8rem; text-align: center; margin-top: 12px; display: none;">Invalid credentials.</p>
+    </div>
+</div>
+<div class="overlay" id="settingsOverlay">
+    <div class="modal-box">
+        <h2>Site Settings</h2>
+        <div class="form-group"><label>Main Title</label><input type="text" id="setSiteTitle"></div>
+        <div class="form-group"><label>Subtitle</label><input type="text" id="setSiteSub"></div>
+        <div class="form-group"><label>Footer Quote</label><textarea id="setSiteQuote"></textarea></div>
+        <div class="form-group"><label>Footer Subtext</label><input type="text" id="setSiteFooter"></div>
+        <div class="modal-actions">
+            <button class="btn cancel" onclick="closeModals()">Cancel</button>
+            <button class="btn save" onclick="saveSiteSettings()">Save</button>
+        </div>
+        <button class="btn danger" style="width:100%; margin-top:15px; padding:10px;" onclick="factoryReset()">Reset Website to Default</button>
+    </div>
+</div>
+<div class="overlay" id="catOverlay">
+    <div class="modal-box">
+        <h2>Manage Categories</h2>
+        <div class="cat-list" id="catListDisplay"></div>
+        <div class="form-group" style="margin-top: 20px; border-top: 1px solid rgba(57,73,171,0.3); padding-top: 20px;">
+            <label>Add New Category</label>
+            <input type="text" id="newCatInput" placeholder="Category Name">
+            <button class="btn save" style="width:100%; margin-top:10px; padding:10px;" onclick="addCategory()">Add Category</button>
+        </div>
+        <div class="modal-actions"><button class="btn cancel" onclick="closeModals()">Close</button></div>
+    </div>
+</div>
+<div class="overlay" id="artOverlay">
+    <div class="modal-box">
+        <h2 id="artModalTitle">Add Artwork</h2>
+        <input type="hidden" id="editArtId" value="">
+        <div class="form-group"><label>Title</label><input type="text" id="artTitle"></div>
+        <div class="form-group"><label>Category</label><select id="artCategory"></select></div>
+        <div class="form-group"><label>Description / Details</label><textarea id="artDesc"></textarea></div>
+        <div class="form-group" style="border: 1px dashed rgba(57,73,171,0.5); padding: 15px; border-radius: 12px;">
+            <label style="color:#ffd54f;">Image Source</label>
+            <label style="font-size:0.7rem; margin-top:10px;">Option 1: Upload from Device</label>
+            <input type="file" id="artFile" accept="image/*" style="padding: 5px; width: 100%;">
+            <div style="text-align: center; margin: 10px 0; color: #9fa8da; font-size:0.8rem;">— OR —</div>
+            <label style="font-size:0.7rem;">Option 2: Paste Image URL / File Name</label>
+            <input type="text" id="artUrl" placeholder="https://... or image.jpg">
+        </div>
+        <div class="modal-actions">
+            <button class="btn cancel" onclick="closeModals()">Cancel</button>
+            <button class="btn save" onclick="saveArtwork()">Save Art</button>
         </div>
     </div>
-
-    <div class="overlay" id="loginOverlay">
-        <div class="modal-box">
-            <h2>Owner Access</h2>
-            <div class="form-group"><label>Username</label><input type="text" id="loginUser"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="loginPass"></div>
-            <button class="btn save" style="width:100%; padding:15px;" onclick="attemptLogin()">Sign In</button>
-            <p class="login-error" id="loginError" style="color: #ef5350; font-size: 0.8rem; text-align: center; margin-top: 12px; display: none;">Invalid credentials.</p>
-        </div>
+</div>
+<div class="starfield" id="starfield"></div>
+<div class="moon-container"><div class="moon"></div></div>
+<div class="hills"><div class="hill"></div><div class="hill"></div><div class="hill"></div></div>
+<header>
+    <h1 id="ui-site-title">ART GALLERY</h1>
+    <p class="subtitle" id="ui-site-sub">A Curated Exhibition</p>
+    <div class="divider"></div>
+    <p class="art-count" id="headerCount">Loading...</p>
+    <button class="admin-btn settings" style="margin-top:20px;" onclick="showLogin()" id="loginBtn">Owner Access</button>
+</header>
+<nav class="nav-container"><div class="nav-tabs" id="navTabsContainer"></div></nav>
+<main id="gallery-main"></main>
+<div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <div class="lightbox-img-wrapper" id="lightbox-wrapper" onclick="if(event.target === this) closeLightbox()">
+        <img src="" alt="" class="lightbox-img" id="lightbox-img">
     </div>
+    <div class="lightbox-info">
+        <h3 id="lightbox-title"></h3>
+        <p id="lightbox-category"></p>
+    </div>
+</div>
+<footer>
+    <p class="footer-text" id="ui-footer-quote">"For my part I know nothing with any certainty, but the sight of the stars makes me dream."</p>
+    <p class="footer-sub" id="ui-footer-sub">Maintained & Curated with Passion</p>
+</footer>
+<script>
+const DEFAULT_SITE_DATA = { title: "ART GALLERY", subtitle: "A Curated Exhibition", quote: "\"For my part I know nothing with any certainty, but the sight of the stars makes me dream.\"", footer: "Maintained & Curated with Passion" };
+const DEFAULT_CATEGORIES = ["Islamic Calligraphy","Islamic Architecture","Awareness Art","Nature & Landscapes","Quranic Journal","Islamic Reminders","Portraits & Eyes","Ramadan Cards","Other Artworks"];
 
-    <div class="overlay" id="settingsOverlay">
-        <div class="modal-box">
-            <h2>Site Settings</h2>
-            <div class="form-group"><label>Main Title</label><input type="text" id="setSiteTitle"></div>
-            <div class="form-group"><label>Subtitle</label><input type="text" id="setSiteSub"></div>
-            <div class="form-group"><label>Footer Quote</label><textarea id="setSiteQuote"></textarea></div>
-            <div class="form-group"><label>Footer Subtext</label><input type="text" id="setSiteFooter"></div>
-            <div class="modal-actions">
-                <button class="btn cancel" onclick="closeModals()">Cancel</button>
-                <button class="btn save" onclick="saveSiteSettings()">Save</button>
+// All 78 artworks mapped directly to the raw filenames
+const DEFAULT_ARTWORKS = [
+{id:"art_1", src:"Screenshot_20260608_130926_Instagram.jpg", title:"Islamic Calligraphy Collection", category:"Islamic Calligraphy", desc:"A framed collection of Quranic and floral calligraphy pieces."},
+{id:"art_2", src:"Screenshot_20260608_130939_Instagram.jpg", title:"Watercolor Quranic Strips", category:"Islamic Calligraphy", desc:"Three soft watercolor strips featuring uplifting Arabic verses."},
+{id:"art_3", src:"Screenshot_20260608_130951_Instagram.jpg", title:"Minar-e-Pakistan Tribute", category:"Islamic Architecture", desc:"A patriotic architectural illustration of Minar-e-Pakistan."},
+{id:"art_4", src:"Screenshot_20260608_131000_Instagram.jpg", title:"Mountain Lake Landscape", category:"Nature & Landscapes", desc:"A peaceful mountain scene reflected across a calm lake."},
+{id:"art_5", src:"Screenshot_20260608_131011_Instagram.jpg", title:"Palestinian Lives Matter Poster", category:"Awareness Art", desc:"A bold advocacy poster calling for justice, peace, and solidarity."},
+{id:"art_6", src:"Screenshot_20260608_131024_Instagram.jpg", title:"Anatomical Heart Study", category:"Other Artworks", desc:"A clean anatomical heart sketch rendered with vibrant marker tones."},
+{id:"art_7", src:"Screenshot_20260608_131040_Instagram.jpg", title:"Moon Study", category:"Nature & Landscapes", desc:"A textured moon study with realistic crater shading."},
+{id:"art_8", src:"Screenshot_20260608_131106_Instagram.jpg", title:"Green Dome at Sunset", category:"Islamic Architecture", desc:"The iconic green dome and minaret set against a glowing evening sky."},
+{id:"art_9", src:"Screenshot_20260608_131112_Instagram.jpg", title:"Wa Huwa Ma'akum", category:"Islamic Calligraphy", desc:"A floral calligraphy piece centered on the verse 'And He is with you.'"},
+{id:"art_10", src:"Screenshot_20260608_131117_Instagram.jpg", title:"Ya Hussain", category:"Islamic Calligraphy", desc:"A striking red composition featuring Ya Hussain calligraphy and shrine symbolism."},
+{id:"art_11", src:"Screenshot_20260608_131122_Instagram.jpg", title:"Hasbunallahu Wa Ni'mal Wakeel", category:"Islamic Calligraphy", desc:"Palestine-inspired calligraphy surrounded by florals and keffiyeh details."},
+{id:"art_12", src:"Screenshot_20260608_131131_Instagram.jpg", title:"La Ilaha Illallah", category:"Islamic Calligraphy", desc:"Bold gold calligraphy presented on a rich emerald backdrop."},
+{id:"art_13", src:"Screenshot_20260608_131139_Instagram.jpg", title:"Forgotten No More", category:"Awareness Art", desc:"A two-page spread pairing Palestine symbolism with sacred calligraphy."},
+{id:"art_14", src:"Screenshot_20260608_131153_Instagram.jpg", title:"Sacred Landmarks Pair", category:"Islamic Architecture", desc:"A paired card composition featuring the Kaaba and the Green Dome."},
+{id:"art_15", src:"Screenshot_20260608_131206_Instagram.jpg", title:"Asma ul Husna Mosque Form", category:"Islamic Calligraphy", desc:"Calligraphy shaped into a mosque silhouette in crisp black ink."},
+{id:"art_16", src:"Screenshot_20260608_131213_Instagram.jpg", title:"Allah on Tree Bark", category:"Islamic Calligraphy", desc:"The name of Allah painted on a bark-like canvas among glossy leaves."},
+{id:"art_17", src:"Screenshot_20260608_131221_Instagram.jpg", title:"Candlelight Muhammad", category:"Islamic Calligraphy", desc:"A candle painting paired with radiant Muhammad calligraphy in a floral mandala."},
+{id:"art_18", src:"Screenshot_20260608_131226_Instagram.jpg", title:"Muhammad Under Moonlight", category:"Islamic Architecture", desc:"A glowing green dome, moon, and calligraphic tribute to the Prophet."},
+{id:"art_19", src:"Screenshot_20260608_131232_Instagram.jpg", title:"Surah Duha Star Journal", category:"Quranic Journal", desc:"A starry journal spread dedicated to Surah Duha."},
+{id:"art_20", src:"Screenshot_20260608_131243_Instagram.jpg", title:"Surah Duha Rose Journal", category:"Quranic Journal", desc:"A rose-themed Surah Duha spread with layered collage details."},
+{id:"art_21", src:"Screenshot_20260608_131300_Instagram.jpg", title:"Pastel Reminder Trio", category:"Islamic Reminders", desc:"Three softly colored reminder cards filled with comforting verses."},
+{id:"art_22", src:"Screenshot_20260608_131306_Instagram.jpg", title:"Classic Reminder Trio", category:"Islamic Reminders", desc:"A coordinated reminder set in blue, green, and floral frames."},
+{id:"art_23", src:"Screenshot_20260608_131328_Instagram.jpg", title:"Sujood at Sunset", category:"Nature & Landscapes", desc:"A devotional landscape showing prayer beneath a glowing sunset sky."},
+{id:"art_24", src:"Screenshot_20260608_131334_Instagram.jpg", title:"With Hardship Comes Ease", category:"Islamic Calligraphy", desc:"Sunflower-framed calligraphy on a pink watercolor background."},
+{id:"art_25", src:"Screenshot_20260608_131342_Instagram.jpg", title:"Starry Islamic Journal Cover", category:"Quranic Journal", desc:"A Van Gogh-inspired journal cover with Quranic phrases and celestial accents."},
+{id:"art_26", src:"Screenshot_20260608_131252_Instagram.jpg", title:"Reminder Sheets Collection", category:"Islamic Reminders", desc:"A neat three-sheet reminder set with handwritten Quranic reflections."},
+{id:"art_27", src:"Snapchat-1470198826(1).jpg", title:"Cosmic Moon Study", category:"Other Artworks", desc:"A dreamy moon illustration infused with galaxy colors and soft glow."},
+{id:"art_28", src:"Snapchat-705301948.jpg", title:"Noor Ki Dua", category:"Other Artworks", desc:"A carefully lettered dua page laid out in traditional calligraphic style."},
+{id:"art_29", src:"Snapchat-1497800412.jpg", title:"Pixel Sunset Study", category:"Other Artworks", desc:"A geometric sunset composition built from layered color blocks."},
+{id:"art_30", src:"IMG_20260608_132714_138.jpg", title:"Spirituality Journal Spread", category:"Quranic Journal", desc:"A reflective journal page mixing notes, sketches, and devotional themes."},
+{id:"art_31", src:"IMG_20260608_153459_462.jpg", title:"Galaxy Garden Painting", category:"Other Artworks", desc:"A fantasy nightscape with planets, blossoms, a swan, and glowing water."},
+{id:"art_32", src:"IMG_20260608_153500_951.jpg", title:"Eye of the World", category:"Portraits & Eyes", desc:"A surreal eye drawing reflecting a world-like landscape in the iris."},
+{id:"art_33", src:"IMG_20260608_153502_427.jpg", title:"Mosque Pencil Sketch", category:"Islamic Architecture", desc:"A detailed pencil sketch of a grand mosque facade."},
+{id:"art_34", src:"IMG_20260608_153503_773.jpg", title:"Sub Ko Sabar Milta", category:"Islamic Calligraphy", desc:"Minimal black calligraphy laid over a soft pink watercolor wash."},
+{id:"art_35", src:"IMG_20260608_153505_004.jpg", title:"Boat of Hope, Face of Resistance", category:"Awareness Art", desc:"A two-panel painting of Palestinian struggle and resilience."},
+{id:"art_36", src:"IMG_20260608_153506_986.jpg", title:"Anime Eyes Study", category:"Portraits & Eyes", desc:"A soft anime-inspired close-up focused on violet eyes."},
+{id:"art_37", src:"IMG_20260608_153508_569.jpg", title:"Beautiful Eyes, Beautiful Soul", category:"Portraits & Eyes", desc:"A paired moon-and-eyes composition with a handwritten affirmation."},
+{id:"art_38", src:"IMG_20260608_153510_386.jpg", title:"Eyes Are the Gateways of the Soul", category:"Portraits & Eyes", desc:"A realistic eye study paired with an Arabic phrase about the soul."},
+{id:"art_39", src:"IMG_20260608_153519_921.jpg", title:"Rainbow Beach Sunset", category:"Nature & Landscapes", desc:"A vivid beach painting with a rainbow arcing across pastel clouds."},
+{id:"art_40", src:"IMG_20260608_153521_537.jpg", title:"Forest Meadow Stream", category:"Nature & Landscapes", desc:"A winding blue stream cutting through a field of wildflowers."},
+{id:"art_41", src:"IMG_20260608_153529_186.jpg", title:"Allahu Samad Gradient Calligraphy", category:"Islamic Calligraphy", desc:"Bold calligraphy placed over a colorful sunrise-style gradient."},
+{id:"art_42", src:"IMG_20260608_153530_639.jpg", title:"Parah One Guidelines", category:"Quranic Journal", desc:"A study sheet outlining do's and don'ts with Quran learning notes."},
+{id:"art_43", src:"IMG_20260608_153531_913.jpg", title:"Saqeel Reminder Sheet", category:"Islamic Reminders", desc:"A brightly bordered reminder sheet focused on practical Islamic guidance."},
+{id:"art_44", src:"IMG_20260608_153535_675.jpg", title:"Lan Tanalu Reminder Sheet", category:"Islamic Reminders", desc:"A green-themed reminder sheet with decorative notes and borders."},
+{id:"art_45", src:"IMG_20260608_153537_137.jpg", title:"La Taghzb Reminder Sheet", category:"Islamic Reminders", desc:"A pink reminder sheet centered on character and daily conduct."},
+{id:"art_46", src:"IMG_20260608_153538_463.jpg", title:"Wal Muhsinat Reminder Sheet", category:"Islamic Reminders", desc:"A blue reminder sheet combining Islamic advice with mosque silhouettes."},
+{id:"art_47", src:"IMG_20260608_153541_537.jpg", title:"Yellow Tulip Bookmark", category:"Other Artworks", desc:"A hand-painted tulip bookmark photographed beside study notes."},
+{id:"art_48", src:"IMG_20260608_153553_039.jpg", title:"Parah One Study Sheet", category:"Quranic Journal", desc:"A neatly lettered study page about Quran learning etiquette."},
+{id:"art_49", src:"IMG_20260608_153603_086.jpg", title:"Parah One Reminder Sheet", category:"Quranic Journal", desc:"A companion study sheet with colorful do's and don'ts layout."},
+{id:"art_50", src:"IMG_20260608_153604_569.jpg", title:"Lan Tanalu Study Poster", category:"Quranic Journal", desc:"A green poster-style study piece with Quran-inspired life reminders."},
+{id:"art_51", src:"IMG_20260608_153607_695.jpg", title:"La Taghzb Study Poster", category:"Quranic Journal", desc:"A playful pink study poster encouraging self-restraint and reflection."},
+{id:"art_52", src:"IMG_20260608_153609_292.jpg", title:"Ramadan Card Set - Blue", category:"Ramadan Cards", desc:"A coordinated blue Ramadan Mubarak mini-card collection."},
+{id:"art_53", src:"IMG_20260608_153614_861.jpg", title:"Ramadan Card Set - Sky Blue", category:"Ramadan Cards", desc:"A sky-blue Ramadan card sheet with lantern and crescent motifs."},
+{id:"art_54", src:"IMG_20260608_153616_136.jpg", title:"Disenthal Freedom", category:"Other Artworks", desc:"A conceptual mixed-media piece about freedom, reality, and hope."},
+{id:"art_55", src:"IMG_20260608_153617_878.jpg", title:"Sunflower Trio", category:"Nature & Landscapes", desc:"A cheerful trio of sunflowers painted against a cool blue background."},
+{id:"art_56", src:"IMG_20260608_153620_912.jpg", title:"Solar System Display", category:"Other Artworks", desc:"A handmade fold-out space display with planets, rocket, and stars."},
+{id:"art_57", src:"IMG_20260608_153639_988.jpg", title:"Ramadan in Advance Card Board", category:"Ramadan Cards", desc:"A board of handmade Ramadan cards arranged in pastel variations."},
+{id:"art_58", src:"IMG_20260608_153700_888.jpg", title:"Ramadan Card Set - Pink", category:"Ramadan Cards", desc:"A bright pink Ramadan Mubarak card collection with playful patterns."},
+{id:"art_59", src:"IMG_20260608_153730_893.jpg", title:"Surah Al-Baqarah 112", category:"Islamic Calligraphy", desc:"A decorative verse artwork from Surah Al-Baqarah with blue and gold accents."},
+{id:"art_60", src:"IMG_20260608_153732_491.jpg", title:"Qul Study Calligraphy", category:"Islamic Calligraphy", desc:"A gold-and-blue calligraphy piece with ornamental geometric framing."},
+{id:"art_61", src:"IMG_20260608_153733_935.jpg", title:"Importance of Salah", category:"Quranic Journal", desc:"A blue educational poster about the spiritual importance of salah."},
+{id:"art_62", src:"IMG_20260608_153735_740.jpg", title:"Salah Benefits Poster", category:"Quranic Journal", desc:"An informative blue poster outlining the blessings and benefits of prayer."},
+{id:"art_63", src:"IMG_20260608_153737_351.jpg", title:"Improve Your Salah", category:"Quranic Journal", desc:"A guided study page offering practical steps to improve salah."},
+{id:"art_64", src:"IMG_20260608_153739_018.jpg", title:"Dua, Sabr, Shukr Trio", category:"Islamic Calligraphy", desc:"Three floral cards highlighting dua, patience, and gratitude."},
+{id:"art_65", src:"IMG_20260608_153740_401.jpg", title:"Sabr Watercolor", category:"Islamic Calligraphy", desc:"The word Sabr painted over a rainbow watercolor field."},
+{id:"art_66", src:"IMG_20260608_153741_893.jpg", title:"Salamun Qaulan Min Rabbin Raheem", category:"Islamic Calligraphy", desc:"A lined-page calligraphy piece pairing Arabic text with its English meaning."},
+{id:"art_67", src:"IMG_20260608_153743_826.jpg", title:"Tulip Bouquet Drawing", category:"Nature & Landscapes", desc:"A colored-pencil bouquet of tulips with delicate shading."},
+{id:"art_68", src:"IMG_20260608_153745_793.jpg", title:"Lantern City Dreamscape", category:"Other Artworks", desc:"A glowing fantasy cityscape with lanterns floating over the water."},
+{id:"art_69", src:"IMG_20260608_153759_903.jpg", title:"Sunflower Pen Holder", category:"Other Artworks", desc:"A handmade pen holder decorated with a bold sunflower motif."},
+{id:"art_70", src:"IMG_20260608_153802_545.jpg", title:"Anime Portrait with Hat", category:"Portraits & Eyes", desc:"A stylized faceless anime portrait with warm orange hair and fedora."},
+{id:"art_71", src:"IMG_20260608_153804_712.jpg", title:"Fa Inna Ma'al Usri Yusra", category:"Islamic Calligraphy", desc:"Soft pink calligraphy art declaring that with hardship comes ease."},
+{id:"art_72", src:"IMG_20260608_153811_271.jpg", title:"Asma ul Husna Grid", category:"Islamic Calligraphy", desc:"A colorful grid presenting many of the beautiful names of Allah."},
+{id:"art_73", src:"IMG_20260608_153827_720.jpg", title:"Latifun Khabir", category:"Islamic Calligraphy", desc:"Gold calligraphy framed by floral ornament on a rich dark background."},
+{id:"art_74", src:"IMG_20260608_153830_263.jpg", title:"Excellent Is the Reward", category:"Islamic Calligraphy", desc:"A pastel floral verse artwork celebrating righteous deeds."},
+{id:"art_75", src:"IMG_20260608_153831_869.jpg", title:"Remember Me", category:"Islamic Calligraphy", desc:"A sunflower verse artwork built around the reminder to remember Allah."},
+{id:"art_76", src:"IMG_20260608_153833_704.jpg", title:"Rose Silhouette", category:"Other Artworks", desc:"A dramatic silhouette of a hand holding a rose in high contrast."},
+{id:"art_77", src:"IMG_20260608_153835_187.jpg", title:"Naruto Group Portrait", category:"Other Artworks", desc:"A colorful fan-art group portrait inspired by Naruto characters."},
+{id:"art_78", src:"IMG_20260608_153838_529.jpg", title:"Traditional Dress Portrait", category:"Portraits & Eyes", desc:"A faceless portrait celebrating traditional dress through bold color and pattern."}
+];
+
+// Use v2 keys to force browser cache reset with the fixed image links
+let siteData = JSON.parse(localStorage.getItem('ag_site_v2')) || { ...DEFAULT_SITE_DATA };
+let categories = JSON.parse(localStorage.getItem('ag_cats_v2')) || [ ...DEFAULT_CATEGORIES ];
+let artworks = JSON.parse(localStorage.getItem('ag_arts_v2')) || JSON.parse(JSON.stringify(DEFAULT_ARTWORKS));
+
+function saveState() {
+    localStorage.setItem('ag_site_v2', JSON.stringify(siteData));
+    localStorage.setItem('ag_cats_v2', JSON.stringify(categories));
+    localStorage.setItem('ag_arts_v2', JSON.stringify(artworks));
+}
+
+function init() { generateStars(); applySiteData(); buildInterface(); }
+
+function applySiteData() {
+    document.getElementById('ui-site-title').innerText = siteData.title;
+    document.getElementById('ui-site-sub').innerText = siteData.subtitle;
+    document.getElementById('ui-footer-quote').innerText = siteData.quote;
+    document.getElementById('ui-footer-sub').innerText = siteData.footer;
+    document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
+}
+
+function buildInterface() {
+    const tabsHtml = `<button class="nav-tab active" data-category="all" onclick="switchTab('all')">All Artworks</button>` +
+        categories.map(c => `<button class="nav-tab" data-category="${c}" onclick="switchTab('${c}')">${c}</button>`).join('');
+    document.getElementById('navTabsContainer').innerHTML = tabsHtml;
+
+    const main = document.getElementById('gallery-main');
+    let sectionsHtml = `<section id="all" class="category-section active" data-category="all"><h2 class="category-title">Exhibition</h2><div class="gallery-grid">${buildCards(artworks)}</div></section>`;
+    
+    categories.forEach(c => {
+        const filtered = artworks.filter(a => a.category === c);
+        sectionsHtml += `<section id="${c}" class="category-section" data-category="${c}"><h2 class="category-title">${c}</h2><div class="gallery-grid">${buildCards(filtered)}</div></section>`;
+    });
+    main.innerHTML = sectionsHtml;
+
+    const select = document.getElementById('artCategory');
+    select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function buildCards(arts) {
+    return arts.map(art => `
+        <div class="art-card">
+            <div class="card-admin-controls">
+                <button class="card-btn" onclick="openArtModal('${art.id}'); event.stopPropagation();">✎</button>
+                <button class="card-btn delete" onclick="deleteArt('${art.id}'); event.stopPropagation();">✖</button>
             </div>
-            <button class="btn danger" style="width:100%; margin-top:15px; padding:10px;" onclick="factoryReset()">Reset Website to Default</button>
-        </div>
-    </div>
-
-    <div class="overlay" id="catOverlay">
-        <div class="modal-box">
-            <h2>Manage Categories</h2>
-            <div class="cat-list" id="catListDisplay"></div>
-            <div class="form-group" style="margin-top: 20px; border-top: 1px solid rgba(57,73,171,0.3); padding-top: 20px;">
-                <label>Add New Category</label>
-                <input type="text" id="newCatInput" placeholder="Category Name">
-                <button class="btn save" style="width:100%; margin-top:10px; padding:10px;" onclick="addCategory()">Add Category</button>
+            <div class="art-image-container" onclick="openLightbox('${art.id}')">
+                <img src="${art.src}" class="art-image" loading="lazy">
             </div>
-            <div class="modal-actions"><button class="btn cancel" onclick="closeModals()">Close</button></div>
-        </div>
-    </div>
-
-    <div class="overlay" id="artOverlay">
-        <div class="modal-box">
-            <h2 id="artModalTitle">Add Artwork</h2>
-            <input type="hidden" id="editArtId" value="">
-            <div class="form-group"><label>Title</label><input type="text" id="artTitle"></div>
-            <div class="form-group"><label>Category</label><select id="artCategory"></select></div>
-            <div class="form-group"><label>Description / Details</label><textarea id="artDesc"></textarea></div>
-            <div class="form-group" style="border: 1px dashed rgba(57,73,171,0.5); padding: 15px; border-radius: 12px;">
-                <label style="color:#ffd54f;">Image Source</label>
-                <label style="font-size:0.7rem; margin-top:10px;">Option 1: Upload from Device</label>
-                <input type="file" id="artFile" accept="image/*" style="padding: 5px; width: 100%;">
-                <div style="text-align: center; margin: 10px 0; color: #9fa8da; font-size:0.8rem;">— OR —</div>
-                <label style="font-size:0.7rem;">Option 2: Paste Image URL / File Name</label>
-                <input type="text" id="artUrl" placeholder="https://... or image.jpg">
+            <div class="art-content" onclick="openLightbox('${art.id}')">
+                <h3 class="art-title">${art.title}</h3>
+                <p class="art-subtitle">${art.category}</p>
             </div>
-            <div class="modal-actions">
-                <button class="btn cancel" onclick="closeModals()">Cancel</button>
-                <button class="btn save" onclick="saveArtwork()">Save Art</button>
-            </div>
-        </div>
-    </div>
+        </div>`).join('');
+}
 
-    <div class="starfield" id="starfield"></div>
-    <div class="moon-container"><div class="moon"></div></div>
-    <div class="hills"><div class="hill"></div><div class="hill"></div><div class="hill"></div></div>
+function switchTab(cat) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.nav-tab[data-category="${cat}"]`).classList.add('active');
+    document.querySelector(`.category-section[data-category="${cat}"]`).classList.add('active');
+}
 
-    <header>
-        <div class="header-glow"></div>
-        <h1 id="ui-site-title">ART GALLERY</h1>
-        <p class="subtitle" id="ui-site-sub">A Curated Exhibition</p>
-        <div class="divider"></div>
-        <p class="art-count" id="headerCount">Loading...</p>
-        <button class="admin-btn settings" style="margin-top:20px;" onclick="showLogin()" id="loginBtn">Owner Access</button>
-    </header>
+function showLogin() { document.getElementById('loginOverlay').classList.add('active'); }
 
-    <nav class="nav-container"><div class="nav-tabs" id="navTabsContainer"></div></nav>
+function attemptLogin() {
+    if (document.getElementById('loginUser').value === 'owner' && document.getElementById('loginPass').value === 'owner123') {
+        document.body.classList.add('admin-mode');
+        document.getElementById('adminBar').classList.add('visible');
+        document.getElementById('loginBtn').style.display = 'none';
+        closeModals();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+}
 
-    <main id="gallery-main"></main>
+function logout() {
+    document.body.classList.remove('admin-mode');
+    document.getElementById('adminBar').classList.remove('visible');
+    document.getElementById('loginBtn').style.display = 'inline-block';
+}
 
-    <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-        <div class="lightbox-info" id="lightbox-info">
-            <h3 id="lightbox-title"></h3>
-            <p id="lightbox-category"></p>
-        </div>
-        <div class="lightbox-img-wrapper" id="lightbox-wrapper" onclick="if(event.target === this) closeLightbox()">
-            <img src="" alt="" class="lightbox-img" id="lightbox-img" onerror="this.classList.add('error'); document.getElementById('lightbox-error').classList.add('active');">
-        </div>
-        <div class="lightbox-error" id="lightbox-error">
-            <div style="font-size: 2rem; margin-bottom: 10px;">⚠</div>
-            <div>Image Unavailable</div>
-        </div>
-        <div class="lightbox-controls">
-            <button class="lb-btn" onclick="zoomOut()" id="zoom-out" title="Zoom Out">−</button>
-            <span class="lb-zoom-level" id="zoom-level">100%</span>
-            <button class="lb-btn" onclick="zoomIn()" id="zoom-in" title="Zoom In">+</button>
-            <button class="lb-btn" onclick="resetZoom()" id="zoom-reset" title="Reset Zoom" style="font-size: 0.8rem;">⟲</button>
-            <button class="lb-btn" onclick="prevImage()" title="Previous">←</button>
-            <button class="lb-btn" onclick="nextImage()" title="Next">→</button>
-        </div>
-    </div>
+function closeModals() {
+    document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
+    document.body.style.overflow = '';
+    document.getElementById('loginError').style.display = 'none';
+}
 
-    <footer>
-        <p class="footer-text" id="ui-footer-quote">"For my part I know nothing with any certainty, but the sight of the stars makes me dream."</p>
-        <p class="footer-sub" id="ui-footer-sub">Maintained & Curated with Passion</p>
-    </footer>
+function openSettingsModal() {
+    document.getElementById('setSiteTitle').value = siteData.title;
+    document.getElementById('setSiteSub').value = siteData.subtitle;
+    document.getElementById('setSiteQuote').value = siteData.quote;
+    document.getElementById('setSiteFooter').value = siteData.footer;
+    document.getElementById('settingsOverlay').classList.add('active');
+}
 
-    <script>
-        const DEFAULT_SITE_DATA = { title: "ART GALLERY", subtitle: "A Curated Exhibition", quote: "\"For my part I know nothing with any certainty, but the sight of the stars makes me dream.\"", footer: "Maintained & Curated with Passion" };
-        const DEFAULT_CATEGORIES = ["Islamic Calligraphy","Islamic Architecture","Awareness Art","Nature & Landscapes","Quranic Journal","Islamic Reminders","Portraits & Eyes","Ramadan Cards","Other Artworks"];
-        
-        const DEFAULT_ARTWORKS = [
-            {id:"art_1",src:"/__l5e/assets-v1/697d7045-f7cc-4c45-a823-f9b04ed46336/Screenshot_20260608_130926_Instagram.jpg",title:"Islamic Calligraphy Collection",category:"Islamic Calligraphy",desc:"A framed collection of Quranic and floral calligraphy pieces."},
-            {id:"art_2",src:"/__l5e/assets-v1/5e4a6217-2fb1-4390-8168-ed2063af79d4/Screenshot_20260608_130939_Instagram.jpg",title:"Watercolor Quranic Strips",category:"Islamic Calligraphy",desc:"Three soft watercolor strips featuring uplifting Arabic verses."},
-            {id:"art_3",src:"/__l5e/assets-v1/78eebeca-84d2-4914-affb-ae10fa38779b/Screenshot_20260608_130951_Instagram.jpg",title:"Minar-e-Pakistan Tribute",category:"Islamic Architecture",desc:"A patriotic architectural illustration of Minar-e-Pakistan."},
-            {id:"art_4",src:"/__l5e/assets-v1/9758b840-a9ed-4d1b-8a5b-c8528a4bc6b9/Screenshot_20260608_131000_Instagram.jpg",title:"Mountain Lake Landscape",category:"Nature & Landscapes",desc:"A peaceful mountain scene reflected across a calm lake."},
-            {id:"art_5",src:"/__l5e/assets-v1/14794978-e97f-4929-9ba6-fc247047359f/Screenshot_20260608_131011_Instagram.jpg",title:"Palestinian Lives Matter Poster",category:"Awareness Art",desc:"A bold advocacy poster calling for justice, peace, and solidarity."},
-            {id:"art_6",src:"/__l5e/assets-v1/56e49751-abb7-4ca7-b66e-e27b836ee0a9/Screenshot_20260608_131024_Instagram.jpg",title:"Anatomical Heart Study",category:"Other Artworks",desc:"A clean anatomical heart sketch rendered with vibrant marker tones."},
-            {id:"art_7",src:"/__l5e/assets-v1/31c68da2-992b-4682-bcbf-c2fa596fe772/Screenshot_20260608_131040_Instagram.jpg",title:"Moon Study",category:"Nature & Landscapes",desc:"A textured moon study with realistic crater shading."},
-            {id:"art_8",src:"/__l5e/assets-v1/cb9bf5e6-b5f8-4d87-9f87-de8f4e674322/Screenshot_20260608_131106_Instagram.jpg",title:"Green Dome at Sunset",category:"Islamic Architecture",desc:"The iconic green dome and minaret set against a glowing evening sky."},
-            {id:"art_9",src:"/__l5e/assets-v1/a48fbdb8-ff73-4dff-b580-5548d4386bd4/Screenshot_20260608_131112_Instagram.jpg",title:"Wa Huwa Ma'akum",category:"Islamic Calligraphy",desc:"A floral calligraphy piece centered on the verse 'And He is with you.'"},
-            {id:"art_10",src:"/__l5e/assets-v1/f1d671df-51b5-4b37-b4b8-6f54eb258ff1/Screenshot_20260608_131117_Instagram.jpg",title:"Ya Hussain",category:"Islamic Calligraphy",desc:"A striking red composition featuring Ya Hussain calligraphy and shrine symbolism."},
-            {id:"art_11",src:"/__l5e/assets-v1/336d3b7c-bf94-4830-a61e-d0471baeba31/Screenshot_20260608_131122_Instagram.jpg",title:"Hasbunallahu Wa Ni'mal Wakeel",category:"Islamic Calligraphy",desc:"Palestine-inspired calligraphy surrounded by florals and keffiyeh details."},
-            {id:"art_12",src:"/__l5e/assets-v1/bef6bad1-d938-4a83-9a7b-27d5a72f768e/Screenshot_20260608_131131_Instagram.jpg",title:"La Ilaha Illallah",category:"Islamic Calligraphy",desc:"Bold gold calligraphy presented on a rich emerald backdrop."},
-            {id:"art_13",src:"/__l5e/assets-v1/8415eebb-49c2-4ac8-b452-e72646e967a1/Screenshot_20260608_131139_Instagram.jpg",title:"Forgotten No More",category:"Awareness Art",desc:"A two-page spread pairing Palestine symbolism with sacred calligraphy."},
-            {id:"art_14",src:"/__l5e/assets-v1/d9b99a52-ac5c-4945-b9e0-e563b8766730/Screenshot_20260608_131153_Instagram.jpg",title:"Sacred Landmarks Pair",category:"Islamic Architecture",desc:"A paired card composition featuring the Kaaba and the Green Dome."},
-            {id:"art_15",src:"/__l5e/assets-v1/5f809448-97ed-414a-bb3a-99caa3d9142b/Screenshot_20260608_131206_Instagram.jpg",title:"Asma ul Husna Mosque Form",category:"Islamic Calligraphy",desc:"Calligraphy shaped into a mosque silhouette in crisp black ink."},
-            {id:"art_16",src:"/__l5e/assets-v1/7ca7c56c-d3de-4830-b30d-2ca2edcd7056/Screenshot_20260608_131213_Instagram.jpg",title:"Allah on Tree Bark",category:"Islamic Calligraphy",desc:"The name of Allah painted on a bark-like canvas among glossy leaves."},
-            {id:"art_17",src:"/__l5e/assets-v1/d2ca02cd-38c0-4ca9-8fea-83deab3615e3/Screenshot_20260608_131221_Instagram.jpg",title:"Candlelight Muhammad",category:"Islamic Calligraphy",desc:"A candle painting paired with radiant Muhammad calligraphy in a floral mandala."},
-            {id:"art_18",src:"/__l5e/assets-v1/fad0ac2b-dd6d-46f0-98ff-3a273ea761ee/Screenshot_20260608_131226_Instagram.jpg",title:"Muhammad Under Moonlight",category:"Islamic Architecture",desc:"A glowing green dome, moon, and calligraphic tribute to the Prophet."},
-            {id:"art_19",src:"/__l5e/assets-v1/4025be26-f4fa-4a04-a1ca-63279b6d8ee2/Screenshot_20260608_131232_Instagram.jpg",title:"Surah Duha Star Journal",category:"Quranic Journal",desc:"A starry journal spread dedicated to Surah Duha."},
-            {id:"art_20",src:"/__l5e/assets-v1/ca807440-09fa-4bfa-a3bb-83919b411726/Screenshot_20260608_131243_Instagram.jpg",title:"Surah Duha Rose Journal",category:"Quranic Journal",desc:"A rose-themed Surah Duha spread with layered collage details."},
-            {id:"art_21",src:"/__l5e/assets-v1/6a3456d8-0f71-48b6-b132-d2a0cb0aee20/Screenshot_20260608_131300_Instagram.jpg",title:"Pastel Reminder Trio",category:"Islamic Reminders",desc:"Three softly colored reminder cards filled with comforting verses."},
-            {id:"art_22",src:"/__l5e/assets-v1/d55de30a-c8af-4ed4-9548-635f7408c6ed/Screenshot_20260608_131306_Instagram.jpg",title:"Classic Reminder Trio",category:"Islamic Reminders",desc:"A coordinated reminder set in blue, green, and floral frames."},
-            {id:"art_23",src:"/__l5e/assets-v1/0a537341-eb86-42b2-8f82-a73c52a6d0b0/Screenshot_20260608_131328_Instagram.jpg",title:"Sujood at Sunset",category:"Nature & Landscapes",desc:"A devotional landscape showing prayer beneath a glowing sunset sky."},
-            {id:"art_24",src:"/__l5e/assets-v1/cc0e73ac-7c1b-4879-a4ae-2ec0a24d903e/Screenshot_20260608_131334_Instagram.jpg",title:"With Hardship Comes Ease",category:"Islamic Calligraphy",desc:"Sunflower-framed calligraphy on a pink watercolor background."},
-            {id:"art_25",src:"/__l5e/assets-v1/c01e1ca7-21bc-44ac-bd1e-0d33af78a721/Screenshot_20260608_131342_Instagram.jpg",title:"Starry Islamic Journal Cover",category:"Quranic Journal",desc:"A Van Gogh-inspired journal cover with Quranic phrases and celestial accents."},
-            {id:"art_26",src:"/__l5e/assets-v1/12b51434-6891-4d38-bcf0-0ae960359c03/Screenshot_20260608_131252_Instagram.jpg",title:"Reminder Sheets Collection",category:"Islamic Reminders",desc:"A neat three-sheet reminder set with handwritten Quranic reflections."},
-            {id:"art_27",src:"/__l5e/assets-v1/b2d20da3-dcac-4fbe-9b6e-23c998e2a861/Snapchat-1470198826(1).jpg",title:"Cosmic Moon Study",category:"Other Artworks",desc:"A dreamy moon illustration infused with galaxy colors and soft glow."},
-            {id:"art_28",src:"/__l5e/assets-v1/4a7428bc-f34d-4b0b-9613-612d592c6738/Snapchat-705301948.jpg",title:"Noor Ki Dua",category:"Other Artworks",desc:"A carefully lettered dua page laid out in traditional calligraphic style."},
-            {id:"art_29",src:"/__l5e/assets-v1/2f4a9c03-0eec-43d4-9772-6333441f6ba1/Snapchat-1497800412.jpg",title:"Pixel Sunset Study",category:"Other Artworks",desc:"A geometric sunset composition built from layered color blocks."},
-            {id:"art_30",src:"/__l5e/assets-v1/fe876c80-89f6-4837-8e6d-dd2220366e00/IMG_20260608_132714_138.jpg",title:"Spirituality Journal Spread",category:"Quranic Journal",desc:"A reflective journal page mixing notes, sketches, and devotional themes."},
-            {id:"art_31",src:"/__l5e/assets-v1/0f5d8b34-84d7-4c2c-a901-a7c8f17590df/IMG_20260608_153459_462.jpg",title:"Galaxy Garden Painting",category:"Other Artworks",desc:"A fantasy nightscape with planets, blossoms, a swan, and glowing water."},
-            {id:"art_32",src:"/__l5e/assets-v1/d817a964-015e-4be3-b9cf-50c82eaa9efd/IMG_20260608_153500_951.jpg",title:"Eye of the World",category:"Portraits & Eyes",desc:"A surreal eye drawing reflecting a world-like landscape in the iris."},
-            {id:"art_33",src:"/__l5e/assets-v1/f3625ce5-d30d-4ec8-b81e-66210f921dd4/IMG_20260608_153502_427.jpg",title:"Mosque Pencil Sketch",category:"Islamic Architecture",desc:"A detailed pencil sketch of a grand mosque facade."},
-            {id:"art_34",src:"/__l5e/assets-v1/6b504dd1-a767-4c48-8a44-45f6422be2e0/IMG_20260608_153503_773.jpg",title:"Sub Ko Sabar Milta",category:"Islamic Calligraphy",desc:"Minimal black calligraphy laid over a soft pink watercolor wash."},
-            {id:"art_35",src:"/__l5e/assets-v1/a4ec8c90-ba71-4fa0-9401-46e6d1ed8033/IMG_20260608_153505_004.jpg",title:"Boat of Hope, Face of Resistance",category:"Awareness Art",desc:"A two-panel painting of Palestinian struggle and resilience."},
-            {id:"art_36",src:"/__l5e/assets-v1/e69dd972-938e-415a-8db3-a2aa74e3f298/IMG_20260608_153506_986.jpg",title:"Anime Eyes Study",category:"Portraits & Eyes",desc:"A soft anime-inspired close-up focused on violet eyes."},
-            {id:"art_37",src:"/__l5e/assets-v1/98df1090-98c9-46a3-956e-25574a8314c6/IMG_20260608_153508_569.jpg",title:"Beautiful Eyes, Beautiful Soul",category:"Portraits & Eyes",desc:"A paired moon-and-eyes composition with a handwritten affirmation."},
-            {id:"art_38",src:"/__l5e/assets-v1/6696a44e-5948-4ece-8b09-73fd692d59ad/IMG_20260608_153510_386.jpg",title:"Eyes Are the Gateways of the Soul",category:"Portraits & Eyes",desc:"A realistic eye study paired with an Arabic phrase about the soul."},
-            {id:"art_39",src:"/__l5e/assets-v1/809e81b7-98c5-43a3-9658-bfb48fdfbfea/IMG_20260608_153519_921.jpg",title:"Rainbow Beach Sunset",category:"Nature & Landscapes",desc:"A vivid beach painting with a rainbow arcing across pastel clouds."},
-            {id:"art_40",src:"/__l5e/assets-v1/25c39069-91da-4911-bf93-dd02c0954bc7/IMG_20260608_153521_537.jpg",title:"Forest Meadow Stream",category:"Nature & Landscapes",desc:"A winding blue stream cutting through a field of wildflowers."},
-            {id:"art_41",src:"/__l5e/assets-v1/214ed4d9-5c83-4e8c-8d1d-b075a6142f5b/IMG_20260608_153529_186.jpg",title:"Allahu Samad Gradient Calligraphy",category:"Islamic Calligraphy",desc:"Bold calligraphy placed over a colorful sunrise-style gradient."},
-            {id:"art_42",src:"/__l5e/assets-v1/5bf38f6b-2b59-47e8-80e4-8617216c1c21/IMG_20260608_153530_639.jpg",title:"Parah One Guidelines",category:"Quranic Journal",desc:"A study sheet outlining do's and don'ts with Quran learning notes."},
-            {id:"art_43",src:"/__l5e/assets-v1/80713a8b-1d6a-412f-a9e0-744dd6878739/IMG_20260608_153531_913.jpg",title:"Saqeel Reminder Sheet",category:"Islamic Reminders",desc:"A brightly bordered reminder sheet focused on practical Islamic guidance."},
-            {id:"art_44",src:"/__l5e/assets-v1/3e166c7a-eebd-40f3-9ea7-d11f1bd0e2f2/IMG_20260608_153535_675.jpg",title:"Lan Tanalu Reminder Sheet",category:"Islamic Reminders",desc:"A green-themed reminder sheet with decorative notes and borders."},
-            {id:"art_45",src:"/__l5e/assets-v1/a0adcc20-7169-4491-a617-1f65d38df91a/IMG_20260608_153537_137.jpg",title:"La Taghzb Reminder Sheet",category:"Islamic Reminders",desc:"A pink reminder sheet centered on character and daily conduct."},
-            {id:"art_46",src:"/__l5e/assets-v1/4f06b7e8-4e75-4c3b-9fda-4f828e33efc8/IMG_20260608_153538_463.jpg",title:"Wal Muhsinat Reminder Sheet",category:"Islamic Reminders",desc:"A blue reminder sheet combining Islamic advice with mosque silhouettes."},
-            {id:"art_47",src:"/__l5e/assets-v1/06370be8-942d-45e2-a92f-ab52f64bea60/IMG_20260608_153541_537.jpg",title:"Yellow Tulip Bookmark",category:"Other Artworks",desc:"A hand-painted tulip bookmark photographed beside study notes."},
-            {id:"art_48",src:"/__l5e/assets-v1/b6292bce-5433-4794-92ec-36a28afce238/IMG_20260608_153553_039.jpg",title:"Parah One Study Sheet",category:"Quranic Journal",desc:"A neatly lettered study page about Quran learning etiquette."},
-            {id:"art_49",src:"/__l5e/assets-v1/56686e66-a3b3-435f-ad75-5998a78d1f2c/IMG_20260608_153603_086.jpg",title:"Parah One Reminder Sheet",category:"Quranic Journal",desc:"A companion study sheet with colorful do's and don'ts layout."},
-            {id:"art_50",src:"/__l5e/assets-v1/e3587c03-6ae8-456c-bb69-b38239ab5376/IMG_20260608_153604_569.jpg",title:"Lan Tanalu Study Poster",category:"Quranic Journal",desc:"A green poster-style study piece with Quran-inspired life reminders."},
-            {id:"art_51",src:"/__l5e/assets-v1/d2e6279e-43ef-4c56-96d5-4703bf8f0113/IMG_20260608_153607_695.jpg",title:"La Taghzb Study Poster",category:"Quranic Journal",desc:"A playful pink study poster encouraging self-restraint and reflection."},
-            {id:"art_52",src:"/__l5e/assets-v1/b9b9e002-402c-4219-a125-f80b9158813c/IMG_20260608_153609_292.jpg",title:"Ramadan Card Set - Blue",category:"Ramadan Cards",desc:"A coordinated blue Ramadan Mubarak mini-card collection."},
-            {id:"art_53",src:"/__l5e/assets-v1/8d96e6ed-756b-44d3-9941-f2fc631b9a3d/IMG_20260608_153614_861.jpg",title:"Ramadan Card Set - Sky Blue",category:"Ramadan Cards",desc:"A sky-blue Ramadan card sheet with lantern and crescent motifs."},
-            {id:"art_54",src:"/__l5e/assets-v1/89d70f14-5f40-4cba-93c7-3d7514c33076/IMG_20260608_153616_136.jpg",title:"Disenthal Freedom",category:"Other Artworks",desc:"A conceptual mixed-media piece about freedom, reality, and hope."},
-            {id:"art_55",src:"/__l5e/assets-v1/22d04af5-daee-43b8-a25f-2fef3f4bdc98/IMG_20260608_153617_878.jpg",title:"Sunflower Trio",category:"Nature & Landscapes",desc:"A cheerful trio of sunflowers painted against a cool blue background."},
-            {id:"art_56",src:"/__l5e/assets-v1/c3767692-a286-49fb-ad4b-081aad405514/IMG_20260608_153620_912.jpg",title:"Solar System Display",category:"Other Artworks",desc:"A handmade fold-out space display with planets, rocket, and stars."},
-            {id:"art_57",src:"/__l5e/assets-v1/d8dbac3e-bcac-4065-95df-ca00b6fdcd6f/IMG_20260608_153639_988.jpg",title:"Ramadan in Advance Card Board",category:"Ramadan Cards",desc:"A board of handmade Ramadan cards arranged in pastel variations."},
-            {id:"art_58",src:"/__l5e/assets-v1/707c8caf-1475-4062-8719-f33d422b2d76/IMG_20260608_153700_888.jpg",title:"Ramadan Card Set - Pink",category:"Ramadan Cards",desc:"A bright pink Ramadan Mubarak card collection with playful patterns."},
-            {id:"art_59",src:"/__l5e/assets-v1/cad56cbe-a9f5-45f0-bb01-56d27c10aba2/IMG_20260608_153730_893.jpg",title:"Surah Al-Baqarah 112",category:"Islamic Calligraphy",desc:"A decorative verse artwork from Surah Al-Baqarah with blue and gold accents."},
-            {id:"art_60",src:"/__l5e/assets-v1/bbe30d40-c31e-4106-b21b-039acdc7fbc5/IMG_20260608_153732_491.jpg",title:"Qul Study Calligraphy",category:"Islamic Calligraphy",desc:"A gold-and-blue calligraphy piece with ornamental geometric framing."},
-            {id:"art_61",src:"/__l5e/assets-v1/2e1d7501-0c7d-4fcc-870f-72355ef566b4/IMG_20260608_153733_935.jpg",title:"Importance of Salah",category:"Quranic Journal",desc:"A blue educational poster about the spiritual importance of salah."},
-            {id:"art_62",src:"/__l5e/assets-v1/5e235487-b090-4e3a-93e5-5e971a0b8b0d/IMG_20260608_153735_740.jpg",title:"Salah Benefits Poster",category:"Quranic Journal",desc:"An informative blue poster outlining the blessings and benefits of prayer."},
-            {id:"art_63",src:"/__l5e/assets-v1/936a002d-8ac3-4451-ac88-668e9a423d47/IMG_20260608_153737_351.jpg",title:"Improve Your Salah",category:"Quranic Journal",desc:"A guided study page offering practical steps to improve salah."},
-            {id:"art_64",src:"/__l5e/assets-v1/0af12fff-a8b7-49de-9ee1-2c41569e4d7c/IMG_20260608_153739_018.jpg",title:"Dua, Sabr, Shukr Trio",category:"Islamic Calligraphy",desc:"Three floral cards highlighting dua, patience, and gratitude."},
-            {id:"art_65",src:"/__l5e/assets-v1/f33a4db1-07b5-4870-b709-c512bf40ff8f/IMG_20260608_153740_401.jpg",title:"Sabr Watercolor",category:"Islamic Calligraphy",desc:"The word Sabr painted over a rainbow watercolor field."},
-            {id:"art_66",src:"/__l5e/assets-v1/f6d8079f-b06c-4a2a-b547-e721c08146f1/IMG_20260608_153741_893.jpg",title:"Salamun Qaulan Min Rabbin Raheem",category:"Islamic Calligraphy",desc:"A lined-page calligraphy piece pairing Arabic text with its English meaning."},
-            {id:"art_67",src:"/__l5e/assets-v1/ace679b1-5eeb-4363-ae3c-d5568d77e8cf/IMG_20260608_153743_826.jpg",title:"Tulip Bouquet Drawing",category:"Nature & Landscapes",desc:"A colored-pencil bouquet of tulips with delicate shading."},
-            {id:"art_68",src:"/__l5e/assets-v1/2404a533-255c-456f-8fa1-0d0dce174b60/IMG_20260608_153745_793.jpg",title:"Lantern City Dreamscape",category:"Other Artworks",desc:"A glowing fantasy cityscape with lanterns floating over the water."},
-            {id:"art_69",src:"/__l5e/assets-v1/116cf255-5060-4220-9e33-d8f18ada3679/IMG_20260608_153759_903.jpg",title:"Sunflower Pen Holder",category:"Other Artworks",desc:"A handmade pen holder decorated with a bold sunflower motif."},
-            {id:"art_70",src:"/__l5e/assets-v1/167160c7-ab3b-4d08-a341-c9483c2e1530/IMG_20260608_153802_545.jpg",title:"Anime Portrait with Hat",category:"Portraits & Eyes",desc:"A stylized faceless anime portrait with warm orange hair and fedora."},
-            {id:"art_71",src:"/__l5e/assets-v1/47cd2ed4-741a-454b-814c-96b5a7b5de6b/IMG_20260608_153804_712.jpg",title:"Fa Inna Ma'al Usri Yusra",category:"Islamic Calligraphy",desc:"Soft pink calligraphy art declaring that with hardship comes ease."},
-            {id:"art_72",src:"/__l5e/assets-v1/9173a1fb-447e-4bb2-8f6e-5b7784678f4c/IMG_20260608_153811_271.jpg",title:"Asma ul Husna Grid",category:"Islamic Calligraphy",desc:"A colorful grid presenting many of the beautiful names of Allah."},
-            {id:"art_73",src:"/__l5e/assets-v1/f283ef85-4a3e-4795-a160-b2e799eb388b/IMG_20260608_153827_720.jpg",title:"Latifun Khabir",category:"Islamic Calligraphy",desc:"Gold calligraphy framed by floral ornament on a rich dark background."},
-            {id:"art_74",src:"/__l5e/assets-v1/cbd3ea97-f5e7-4c44-a835-76ea39fee956/IMG_20260608_153830_263.jpg",title:"Excellent Is the Reward",category:"Islamic Calligraphy",desc:"A pastel floral verse artwork celebrating righteous deeds."},
-            {id:"art_75",src:"/__l5e/assets-v1/87d46d2c-de05-4a4b-95ec-c92b15b3a5fc/IMG_20260608_153831_869.jpg",title:"Remember Me",category:"Islamic Calligraphy",desc:"A sunflower verse artwork built around the reminder to remember Allah."},
-            {id:"art_76",src:"/__l5e/assets-v1/659289ce-140a-488c-b769-0c313b5424ad/IMG_20260608_153833_704.jpg",title:"Rose Silhouette",category:"Other Artworks",desc:"A dramatic silhouette of a hand holding a rose in high contrast."},
-            {id:"art_77",src:"/__l5e/assets-v1/869095da-27d4-435b-9dc3-fcf425177856/IMG_20260608_153835_187.jpg",title:"Naruto Group Portrait",category:"Other Artworks",desc:"A colorful fan-art group portrait inspired by Naruto characters."},
-            {id:"art_78",src:"/__l5e/assets-v1/04f71625-add9-496f-a4b6-d5f6f026e46b/IMG_20260608_153838_529.jpg",title:"Traditional Dress Portrait",category:"Portraits & Eyes",desc:"A faceless portrait celebrating traditional dress through bold color and pattern."}
-        ];
+function saveSiteSettings() {
+    siteData.title = document.getElementById('setSiteTitle').value || "ART GALLERY";
+    siteData.subtitle = document.getElementById('setSiteSub').value || "";
+    siteData.quote = document.getElementById('setSiteQuote').value || "";
+    siteData.footer = document.getElementById('setSiteFooter').value || "";
+    saveState(); applySiteData(); closeModals();
+}
 
-        // This powerful block safely merges new code updates with your local browser storage
-        const ARTWORK_DEFAULTS_BY_ID = Object.fromEntries(DEFAULT_ARTWORKS.map((art) => [art.id, art]));
-        let siteData = JSON.parse(localStorage.getItem('ag_site')) || { ...DEFAULT_SITE_DATA };
-        let categories = JSON.parse(localStorage.getItem('ag_cats')) || [ ...DEFAULT_CATEGORIES ];
-        let artworks = (JSON.parse(localStorage.getItem('ag_arts')) || JSON.parse(JSON.stringify(DEFAULT_ARTWORKS)))
-            .map((art) => ARTWORK_DEFAULTS_BY_ID[art.id] ? { ...art, ...ARTWORK_DEFAULTS_BY_ID[art.id] } : art);
-        
-        // Add any brand new default artworks that aren't in local storage yet
-        DEFAULT_ARTWORKS.forEach((art) => {
-            if (!artworks.some((existing) => existing.id === art.id)) artworks.push({ ...art });
-        });
+function openCatModal() { renderCatList(); document.getElementById('catOverlay').classList.add('active'); }
 
-        function saveState() {
-            localStorage.setItem('ag_site', JSON.stringify(siteData));
-            localStorage.setItem('ag_cats', JSON.stringify(categories));
-            localStorage.setItem('ag_arts', JSON.stringify(artworks));
-        }
+function renderCatList() {
+    document.getElementById('catListDisplay').innerHTML = categories.map((c, i) => `
+        <div class="cat-item"><span>${c}</span><button class="cat-delete" onclick="deleteCategory(${i})">✖ Delete</button></div>`).join('');
+}
 
-        // ==================== INITIALIZATION ====================
-        function init() { 
-            generateStars(); 
-            applySiteData(); 
-            buildInterface(); 
-        }
+function addCategory() {
+    const val = document.getElementById('newCatInput').value.trim();
+    if(val && !categories.includes(val)) {
+        categories.push(val); saveState(); buildInterface(); renderCatList();
+        document.getElementById('newCatInput').value = '';
+    }
+}
 
-        function applySiteData() {
-            document.getElementById('ui-site-title').innerText = siteData.title;
-            document.getElementById('ui-site-sub').innerText = siteData.subtitle;
-            document.getElementById('ui-footer-quote').innerText = siteData.quote;
-            document.getElementById('ui-footer-sub').innerText = siteData.footer;
-            document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
-        }
+function deleteCategory(index) {
+    const cat = categories[index];
+    if(confirm(`Delete category "${cat}"? Artworks will be marked "Uncategorized".`)) {
+        categories.splice(index, 1);
+        artworks.forEach(a => { if(a.category === cat) a.category = "Uncategorized"; });
+        if(!categories.includes("Uncategorized")) categories.push("Uncategorized");
+        saveState(); buildInterface(); renderCatList();
+    }
+}
 
-        function buildInterface() {
-            const tabsHtml = `<button class="nav-tab active" data-category="all" onclick="switchTab('all')">All Artworks</button>` +
-                categories.map(c => `<button class="nav-tab" data-category="${c}" onclick="switchTab('${c}')">${c}</button>`).join('');
-            document.getElementById('navTabsContainer').innerHTML = tabsHtml;
+let currentFileBase64 = null;
+document.getElementById('artFile').addEventListener('change', function(e) {
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        currentFileBase64 = event.target.result;
+        document.getElementById('artUrl').value = "Image loaded from device ✓";
+    };
+    reader.readAsDataURL(file);
+});
 
-            const main = document.getElementById('gallery-main');
-            let sectionsHtml = `<section id="all" class="category-section active" data-category="all"><h2 class="category-title">Exhibition</h2><div class="gallery-grid">${buildCards(artworks)}</div></section>`;
-            
-            categories.forEach(c => {
-                const filtered = artworks.filter(a => a.category === c);
-                sectionsHtml += `<section id="${c}" class="category-section" data-category="${c}"><h2 class="category-title">${c}</h2><div class="gallery-grid">${buildCards(filtered)}</div></section>`;
-            });
-            main.innerHTML = sectionsHtml;
+function openArtModal(id = null) {
+    currentFileBase64 = null;
+    document.getElementById('artFile').value = '';
+    if(id) {
+        document.getElementById('artModalTitle').innerText = "Edit Artwork";
+        const art = artworks.find(a => a.id === id);
+        document.getElementById('editArtId').value = id;
+        document.getElementById('artTitle').value = art.title;
+        document.getElementById('artCategory').value = art.category;
+        document.getElementById('artDesc').value = art.desc || "";
+        document.getElementById('artUrl').value = art.src;
+    } else {
+        document.getElementById('artModalTitle').innerText = "Add Artwork";
+        document.getElementById('editArtId').value = "";
+        document.getElementById('artTitle').value = "";
+        document.getElementById('artDesc').value = "";
+        document.getElementById('artUrl').value = "";
+    }
+    document.getElementById('artOverlay').classList.add('active');
+}
 
-            const select = document.getElementById('artCategory');
-            select.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
+function saveArtwork() {
+    const id = document.getElementById('editArtId').value;
+    const title = document.getElementById('artTitle').value.trim() || "Untitled";
+    const cat = document.getElementById('artCategory').value;
+    const desc = document.getElementById('artDesc').value;
+    let src = document.getElementById('artUrl').value.trim();
+    
+    if(currentFileBase64) src = currentFileBase64;
+    if(!src) return alert("Please provide an image URL or upload a file.");
+    
+    if(id) {
+        const index = artworks.findIndex(a => a.id === id);
+        artworks[index] = { ...artworks[index], title, category: cat, desc, src };
+    } else {
+        artworks.push({ id: 'art_' + Date.now(), title, category: cat, desc, src });
+    }
+    
+    try {
+        saveState(); buildInterface(); closeModals(); switchTab(cat);
+        document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
+    } catch (e) {
+        alert("Storage Quota Exceeded! Phone images are too large. Please use URLs instead, or delete some items.");
+    }
+}
 
-        function buildCards(arts) {
-            return arts.map(art => `
-                <div class="art-card">
-                    <div class="card-admin-controls">
-                        <button class="card-btn" onclick="openArtModal('${art.id}'); event.stopPropagation();">✎</button>
-                        <button class="card-btn delete" onclick="deleteArt('${art.id}'); event.stopPropagation();">✖</button>
-                    </div>
-                    <div class="art-image-container" onclick="openLightbox('${art.id}')">
-                        <img src="${art.src}" class="art-image" loading="lazy" onerror="this.classList.add('error');">
-                        <div class="img-error"><div>⚠ Missing</div></div>
-                    </div>
-                    <div class="art-content" onclick="openLightbox('${art.id}')">
-                        <h3 class="art-title">${art.title}</h3>
-                        <p class="art-subtitle">${art.category}</p>
-                    </div>
-                </div>`).join('');
-        }
+function deleteArt(id) {
+    if(confirm("Are you sure you want to delete this artwork?")) {
+        artworks = artworks.filter(a => a.id !== id);
+        saveState(); buildInterface();
+        document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
+    }
+}
 
-        function switchTab(cat) {
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.category-section').forEach(s => s.classList.remove('active'));
-            document.querySelector(`.nav-tab[data-category="${cat}"]`).classList.add('active');
-            document.querySelector(`.category-section[data-category="${cat}"]`).classList.add('active');
-        }
+function factoryReset() {
+    if(confirm("WARNING: This will wipe all your custom changes and restore the default template. Continue?")) {
+        localStorage.clear(); location.reload();
+    }
+}
 
-        // ==================== ADMIN / LOGIN ====================
-        function showLogin() { document.getElementById('loginOverlay').classList.add('active'); }
-        
-        function attemptLogin() {
-            if (document.getElementById('loginUser').value === 'owner' && document.getElementById('loginPass').value === 'owner123') {
-                document.body.classList.add('admin-mode');
-                document.getElementById('adminBar').classList.add('visible');
-                document.getElementById('loginBtn').style.display = 'none';
-                closeModals();
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-            }
-        }
+function openLightbox(id) {
+    const art = artworks.find(a => a.id === id); if(!art) return;
+    document.getElementById('lightbox-img').src = art.src;
+    document.getElementById('lightbox-title').innerText = art.title;
+    document.getElementById('lightbox-category').innerText = art.desc || art.category;
+    document.getElementById('lightbox').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
 
-        function logout() {
-            document.body.classList.remove('admin-mode');
-            document.getElementById('adminBar').classList.remove('visible');
-            document.getElementById('loginBtn').style.display = 'inline-block';
-        }
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => document.getElementById('lightbox-img').src = '', 300);
+}
 
-        function closeModals() {
-            document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
-            document.body.style.overflow = '';
-            document.getElementById('loginError').style.display = 'none';
-        }
+function generateStars() {
+    const sf = document.getElementById('starfield');
+    for (let i = 0; i < 100; i++) {
+        let s = document.createElement('div');
+        s.className = 'star ' + (Math.random() > 0.9 ? 'golden' : 'bright');
+        s.style.width = s.style.height = (Math.random()*3+1)+'px';
+        s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
+        s.style.setProperty('--duration', (Math.random()*4+2)+'s');
+        s.style.setProperty('--opacity', Math.random()*0.5+0.2);
+        sf.appendChild(s);
+    }
+}
 
-        // ==================== SETTINGS & CATEGORIES ====================
-        function openSettingsModal() {
-            document.getElementById('setSiteTitle').value = siteData.title;
-            document.getElementById('setSiteSub').value = siteData.subtitle;
-            document.getElementById('setSiteQuote').value = siteData.quote;
-            document.getElementById('setSiteFooter').value = siteData.footer;
-            document.getElementById('settingsOverlay').classList.add('active');
-        }
-
-        function saveSiteSettings() {
-            siteData.title = document.getElementById('setSiteTitle').value || "ART GALLERY";
-            siteData.subtitle = document.getElementById('setSiteSub').value || "";
-            siteData.quote = document.getElementById('setSiteQuote').value || "";
-            siteData.footer = document.getElementById('setSiteFooter').value || "";
-            saveState(); applySiteData(); closeModals();
-        }
-
-        function openCatModal() { renderCatList(); document.getElementById('catOverlay').classList.add('active'); }
-        
-        function renderCatList() {
-            document.getElementById('catListDisplay').innerHTML = categories.map((c, i) => `
-                <div class="cat-item"><span>${c}</span><button class="cat-delete" onclick="deleteCategory(${i})">✖ Delete</button></div>`).join('');
-        }
-
-        function addCategory() {
-            const val = document.getElementById('newCatInput').value.trim();
-            if(val && !categories.includes(val)) {
-                categories.push(val); saveState(); buildInterface(); renderCatList();
-                document.getElementById('newCatInput').value = '';
-            }
-        }
-
-        function deleteCategory(index) {
-            const cat = categories[index];
-            if(confirm(`Delete category "${cat}"? Artworks will be marked "Uncategorized".`)) {
-                categories.splice(index, 1);
-                artworks.forEach(a => { if(a.category === cat) a.category = "Uncategorized"; });
-                if(!categories.includes("Uncategorized")) categories.push("Uncategorized");
-                saveState(); buildInterface(); renderCatList();
-            }
-        }
-
-        // ==================== ARTWORK MANAGER ====================
-        let currentFileBase64 = null;
-        document.getElementById('artFile').addEventListener('change', function(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                currentFileBase64 = event.target.result;
-                document.getElementById('artUrl').value = "Image loaded from device ✓";
-            };
-            reader.readAsDataURL(file);
-        });
-
-        function openArtModal(id = null) {
-            currentFileBase64 = null;
-            document.getElementById('artFile').value = '';
-            if(id) {
-                document.getElementById('artModalTitle').innerText = "Edit Artwork";
-                const art = artworks.find(a => a.id === id);
-                document.getElementById('editArtId').value = id;
-                document.getElementById('artTitle').value = art.title;
-                document.getElementById('artCategory').value = art.category;
-                document.getElementById('artDesc').value = art.desc || "";
-                document.getElementById('artUrl').value = art.src;
-            } else {
-                document.getElementById('artModalTitle').innerText = "Add Artwork";
-                document.getElementById('editArtId').value = "";
-                document.getElementById('artTitle').value = "";
-                document.getElementById('artDesc').value = "";
-                document.getElementById('artUrl').value = "";
-            }
-            document.getElementById('artOverlay').classList.add('active');
-        }
-
-        function saveArtwork() {
-            const id = document.getElementById('editArtId').value;
-            const title = document.getElementById('artTitle').value.trim() || "Untitled";
-            const cat = document.getElementById('artCategory').value;
-            const desc = document.getElementById('artDesc').value;
-            let src = document.getElementById('artUrl').value.trim();
-            
-            if(currentFileBase64) src = currentFileBase64;
-            if(!src) return alert("Please provide an image URL or upload a file.");
-            
-            if(id) {
-                const index = artworks.findIndex(a => a.id === id);
-                artworks[index] = { ...artworks[index], title, category: cat, desc, src };
-            } else {
-                artworks.push({ id: 'art_' + Date.now(), title, category: cat, desc, src });
-            }
-            
-            try {
-                saveState(); buildInterface(); closeModals(); switchTab(cat);
-                document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
-            } catch (e) {
-                alert("Storage Quota Exceeded! Phone images are too large. Please use URLs instead, or delete some items.");
-            }
-        }
-
-        function deleteArt(id) {
-            if(confirm("Are you sure you want to delete this artwork?")) {
-                artworks = artworks.filter(a => a.id !== id);
-                saveState(); buildInterface();
-                document.getElementById('headerCount').innerText = `${artworks.length} Works • Official Archive`;
-            }
-        }
-
-        function factoryReset() {
-            if(confirm("WARNING: This will wipe all your custom changes and restore the default template. Continue?")) {
-                localStorage.clear(); location.reload();
-            }
-        }
-
-        // ==================== ADVANCED LIGHTBOX (ZOOM & PAN) ====================
-        let currentLbIndex = 0;
-        let zoomLevel = 1;
-        let isDragging = false;
-        let startX, startY, translateX = 0, translateY = 0;
-
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxWrapper = document.getElementById('lightbox-wrapper');
-        const zoomLevelEl = document.getElementById('zoom-level');
-        const zoomInBtn = document.getElementById('zoom-in');
-        const zoomOutBtn = document.getElementById('zoom-out');
-
-        function updateZoomDisplay() {
-            zoomLevelEl.textContent = Math.round(zoomLevel * 100) + '%';
-            zoomInBtn.disabled = zoomLevel >= 5;
-            zoomOutBtn.disabled = zoomLevel <= 0.5;
-
-            if (zoomLevel > 1) {
-                lightboxImg.classList.add('zoomed');
-                lightboxWrapper.classList.add('is-zoomed');
-            } else {
-                lightboxImg.classList.remove('zoomed');
-                lightboxWrapper.classList.remove('is-zoomed');
-                translateX = 0; translateY = 0;
-            }
-            lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`;
-        }
-
-        function zoomIn() { if (zoomLevel < 5) { zoomLevel = Math.min(zoomLevel + 0.5, 5); updateZoomDisplay(); } }
-        function zoomOut() { 
-            if (zoomLevel > 0.5) { 
-                zoomLevel = Math.max(zoomLevel - 0.5, 0.5); 
-                if (zoomLevel <= 1) { translateX = 0; translateY = 0; }
-                updateZoomDisplay(); 
-            } 
-        }
-        function resetZoom() { zoomLevel = 1; translateX = 0; translateY = 0; updateZoomDisplay(); }
-
-        function openLightbox(id) {
-            const index = artworks.findIndex(a => a.id === id);
-            if(index === -1) return;
-            currentLbIndex = index;
-            const art = artworks[currentLbIndex];
-            
-            resetZoom();
-            lightboxImg.style.animation = 'none';
-            lightboxImg.classList.remove('error');
-            document.getElementById('lightbox-error').classList.remove('active');
-            
-            document.getElementById('lightbox-title').innerText = art.title;
-            document.getElementById('lightbox-category').innerText = art.desc || art.category;
-            
-            setTimeout(() => {
-                lightboxImg.src = art.src;
-                lightboxImg.style.animation = 'fadeIn 0.4s ease';
-            }, 10);
-            
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeLightbox() {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = '';
-            setTimeout(() => { lightboxImg.src = ''; resetZoom(); }, 300);
-        }
-
-        function prevImage() {
-            currentLbIndex = (currentLbIndex - 1 + artworks.length) % artworks.length;
-            openLightbox(artworks[currentLbIndex].id);
-        }
-
-        function nextImage() {
-            currentLbIndex = (currentLbIndex + 1) % artworks.length;
-            openLightbox(artworks[currentLbIndex].id);
-        }
-
-        lightboxWrapper.addEventListener('mousedown', (e) => {
-            if (zoomLevel <= 1) return;
-            isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY;
-            lightboxWrapper.style.cursor = 'grabbing';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return; e.preventDefault();
-            translateX = e.clientX - startX; translateY = e.clientY - startY;
-            updateZoomDisplay();
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false; lightboxWrapper.style.cursor = zoomLevel > 1 ? 'grab' : 'default';
-        });
-
-        lightboxWrapper.addEventListener('touchstart', (e) => {
-            if (zoomLevel <= 1) return;
-            isDragging = true; startX = e.touches[0].clientX - translateX; startY = e.touches[0].clientY - translateY;
-        }, { passive: false });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return; e.preventDefault();
-            translateX = e.touches[0].clientX - startX; translateY = e.touches[0].clientY - startY;
-            updateZoomDisplay();
-        }, { passive: false });
-
-        document.addEventListener('touchend', () => { isDragging = false; });
-        lightboxWrapper.addEventListener('wheel', (e) => { e.preventDefault(); if (e.deltaY < 0) zoomIn(); else zoomOut(); }, { passive: false });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') { closeLightbox(); closeModals(); }
-            if (!lightbox.classList.contains('active')) return;
-            switch(e.key) {
-                case 'ArrowLeft': prevImage(); break;
-                case 'ArrowRight': nextImage(); break;
-                case '+': case '=': zoomIn(); break;
-                case '-': zoomOut(); break;
-                case '0': resetZoom(); break;
-            }
-        });
-
-        // ==================== STARFIELD ====================
-        function generateStars() {
-            const sf = document.getElementById('starfield');
-            for (let i = 0; i < 100; i++) {
-                let s = document.createElement('div');
-                s.className = 'star ' + (Math.random() > 0.9 ? 'golden' : 'bright');
-                s.style.width = s.style.height = (Math.random()*3+1)+'px';
-                s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
-                s.style.setProperty('--duration', (Math.random()*4+2)+'s');
-                s.style.setProperty('--opacity', Math.random()*0.5+0.2);
-                sf.appendChild(s);
-            }
-        }
-
-        init();
-    </script>
+init();
+</script>
 </body>
 </html>
+
